@@ -7,6 +7,8 @@ import { CostBreakdownPanel } from "@/components/CostBreakdownPanel";
 import { LightningWalletPanel } from "@/components/LightningWalletPanel";
 import { BitcoinWalletPanel } from "@/components/BitcoinWalletPanel";
 import { EmpirePanel } from "@/components/EmpirePanel";
+import { CityMapPanel } from "@/components/CityMapPanel";
+import { RewardsPanel } from "@/components/RewardsPanel";
 import { InsightsPanel } from "@/components/InsightsPanel";
 import { Button } from "@/components/ui/button";
 import { GameState } from "@/types/game";
@@ -16,7 +18,7 @@ import {
   buyBtc, sweepLightningToChain, consolidateUtxos, buyMiningRig, toggleMining,
   stockCapacity, totalMachines, hasUpgrade, SAVE_KEY, ActionResult, LN_CUSTOMER_SHARE,
 } from "@/lib/gameLogic";
-import { Play, FastForward, RotateCcw, HelpCircle, X, Volume2, VolumeX, Home, Candy, Castle, Zap, Landmark, Cog, Megaphone, Sparkles } from "lucide-react";
+import { Play, FastForward, RotateCcw, HelpCircle, X, Volume2, VolumeX, Home, Map, Candy, Castle, Trophy, Zap, Landmark, Cog } from "lucide-react";
 import { chiptune, MUSIC_PREF_KEY } from "@/lib/music";
 import { sfxCoin, sfxError, sfxFanfare, setSfxEnabled, SFX_PREF_KEY } from "@/lib/sfx";
 import { toast } from "sonner";
@@ -91,7 +93,7 @@ const Index = () => {
       (entries) => entries.forEach((e) => { if (e.isIntersecting) setActiveTab(e.target.id); }),
       { rootMargin: "-40% 0px -55% 0px" },
     );
-    ["play", "gums", "empire", "marketing", "upgrades", "wallet", "bank"].forEach((id) => {
+    ["play", "map", "gums", "empire", "rewards", "wallet", "bank"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) obs.observe(el);
     });
@@ -221,10 +223,10 @@ const Index = () => {
         <div className="grid grid-cols-7">
           {[
             { id: "play", label: "Play", icon: Home },
+            { id: "map", label: "Map", icon: Map },
             { id: "gums", label: "Gums", icon: Candy },
             { id: "empire", label: "Empire", icon: Castle },
-            { id: "upgrades", label: "Upgrades", icon: Sparkles },
-            { id: "marketing", label: "Marketing", icon: Megaphone },
+            { id: "rewards", label: "Rewards", icon: Trophy },
             { id: "wallet", label: "Wallet", icon: Zap },
             { id: "bank", label: "Bank", icon: Landmark },
           ].map((tab) => (
@@ -313,6 +315,14 @@ const Index = () => {
           </div>
         </div>
 
+        <div id="map" className="scroll-mt-3">
+          <CityMapPanel
+            gameState={gameState}
+            onUnlockLocation={(id) => apply(unlockLocation(gameState, id))}
+            onBuyMachine={(id) => apply(buyMachine(gameState, id))}
+          />
+        </div>
+
         <div id="empire" className="scroll-mt-3">
         <EmpirePanel
           gameState={gameState}
@@ -324,6 +334,10 @@ const Index = () => {
           onBuyMarketing={(channelId) => apply(buyMarketing(gameState, channelId))}
           onToggleOngoing={(activityId) => apply(toggleOngoingMarketing(gameState, activityId))}
         />
+        </div>
+
+        <div id="rewards" className="scroll-mt-3">
+          <RewardsPanel gameState={gameState} />
         </div>
 
         <div id="wallet" className="scroll-mt-3">
