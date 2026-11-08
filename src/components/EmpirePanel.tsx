@@ -2,8 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { GameState } from "@/types/game";
-import { formatCurrency, MACHINE_COST, CITIES, machineCapOf, dailyRent, totalMachines, RESTOCK_LEVELS, hasUpgrade, MARKETING_CHANNELS, ONGOING_MARKETING, ongoingDailyCost } from "@/lib/gameLogic";
-import { Lock, Plus, Sparkles, Megaphone } from "lucide-react";
+import { formatCurrency, dailyRent, totalMachines, RESTOCK_LEVELS, hasUpgrade, MARKETING_CHANNELS, ONGOING_MARKETING, ongoingDailyCost } from "@/lib/gameLogic";
+import { Sparkles, Megaphone } from "lucide-react";
 
 const UPGRADE_GROUPS: { name: string; ids: string[] }[] = [
   { name: "📣 Sell more", ids: ["neon", "displays"] },
@@ -14,8 +14,6 @@ const UPGRADE_GROUPS: { name: string; ids: string[] }[] = [
 
 interface Props {
   gameState: GameState;
-  onBuyMachine: (locationId: string) => void;
-  onUnlockLocation: (locationId: string) => void;
   onBuyUpgrade: (upgradeId: string) => void;
   onMarketingChange: (spend: number) => void;
   onRestockLevelChange: (levelId: string) => void;
@@ -23,46 +21,13 @@ interface Props {
   onToggleOngoing: (activityId: string) => void;
 }
 
-export const EmpirePanel = ({ gameState, onBuyMachine, onUnlockLocation, onBuyUpgrade, onMarketingChange, onRestockLevelChange, onBuyMarketing, onToggleOngoing }: Props) => {
+export const EmpirePanel = ({ gameState, onBuyUpgrade, onMarketingChange, onRestockLevelChange, onBuyMarketing, onToggleOngoing }: Props) => {
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-black mb-1">🏰 Your Empire</h2>
         <p className="text-sm font-semibold text-muted-foreground">{totalMachines(gameState)} machines · rent {formatCurrency(dailyRent(gameState))}/day · more traffic means more chewers per machine</p>
-        {CITIES.map((city) => (
-        <div key={city} className="mt-5">
-          <h3 className="text-xl font-black">{city === "Bubbleville" ? "🏠" : "🌃"} {city}{city === "Neon Bay" && <span className="text-xs font-bold text-muted-foreground"> · new city, opens once the Airport Terminal is open</span>}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-3">
-          {gameState.locations.filter((l) => l.city === city).map((loc) => (
-            <Card key={loc.id} className={`bubbly-card p-5 ${loc.unlocked ? "" : "border-dashed bg-muted/50 opacity-80"}`}>
-              <div className="flex items-center gap-3">
-                <div className="text-4xl animate-floaty">{loc.emoji}</div>
-                <div>
-                  <h3 className="font-black text-lg leading-tight">{loc.name}</h3>
-                  <p className="text-xs font-bold text-muted-foreground">{loc.blurb}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center mt-4 text-sm">
-                <div className="bg-muted rounded-2xl py-2"><p className="font-black">{loc.machines}/{machineCapOf(loc)}</p><p className="text-[11px] font-bold text-muted-foreground uppercase">machines</p></div>
-                <div className="bg-muted rounded-2xl py-2"><p className="font-black">x{loc.traffic.toFixed(1)}</p><p className="text-[11px] font-bold text-muted-foreground uppercase">traffic</p></div>
-                <div className="bg-muted rounded-2xl py-2"><p className="font-black">${loc.rentPerMachine}</p><p className="text-[11px] font-bold text-muted-foreground uppercase">rent/day</p></div>
-              </div>
-              {loc.unlocked ? (
-                <Button onClick={() => onBuyMachine(loc.id)} disabled={gameState.cash < MACHINE_COST || loc.machines >= machineCapOf(loc)} className="w-full rounded-full font-black mt-4 gap-1">
-                  <Plus className="h-4 w-4" /> {loc.machines >= machineCapOf(loc) ? "Location full" : `Add machine (${formatCurrency(MACHINE_COST)})`}
-                </Button>
-              ) : (
-                <>
-                  {loc.requiresLocation && !gameState.locations.find((l) => l.id === loc.requiresLocation)?.unlocked && (
-                    <p className="text-xs font-black text-amber-600 mt-3">🔒 Needs {gameState.locations.find((l) => l.id === loc.requiresLocation)?.name} open first</p>
-                  )}
-                  <Button onClick={() => onUnlockLocation(loc.id)} variant="secondary" className="w-full rounded-full font-black mt-3 gap-1">
-                    <Lock className="h-4 w-4" /> Open for {formatCurrency(loc.unlockCost + MACHINE_COST)} total (incl. first machine)
-                  </Button>
-                </>
-              )}
-            </Card>
-          ))}
+        <p className="text-sm font-bold text-fuchsia-700 mt-2">🗺️ Locations live on the Map tab. This screen is marketing and upgrades.</p>
         </div>
         </div>
         ))}

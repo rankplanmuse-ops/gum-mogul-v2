@@ -331,8 +331,6 @@ const Index = () => {
         <div id="empire" className={activeTab === "empire" ? "" : "hidden"}>
         <EmpirePanel
           gameState={gameState}
-          onBuyMachine={(id) => apply(buyMachine(gameState, id))}
-          onUnlockLocation={(id) => apply(unlockLocation(gameState, id))}
           onBuyUpgrade={(id) => apply(buyUpgrade(gameState, id))}
           onMarketingChange={(spend) => setGameState((s) => ({ ...s, marketingSpend: spend }))}
           onRestockLevelChange={(levelId) => { setGameState((s) => ({ ...s, restockLevel: levelId })); toast.success(`Restock Bot set to ${levelId}`); }}
