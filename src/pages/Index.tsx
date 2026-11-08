@@ -210,7 +210,10 @@ const Index = () => {
         ))}
       </div>
 
-      {/* Persistent top bar on every screen: day, balances, Finance, settings. */}
+      {/* Persistent top bar on every screen but the Map: day, balances,
+          Finance, settings. The diorama is a full game menu with its own
+          buttons, so the global header hides there. */}
+      {activeTab !== "map" && (
       <div className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-black/10">
         <div className="container mx-auto max-w-7xl px-4 py-2 flex items-center gap-2">
           <span className="font-black text-sm whitespace-nowrap">📅 Day {gameState.day}</span>
@@ -224,18 +227,21 @@ const Index = () => {
           </button>
         </div>
       </div>
+      )}
 
       <button
         onClick={toggleMusic}
         aria-label={musicOn ? "Turn the 8-bit music off" : "Turn the 8-bit music on"}
         title={musicOn ? "Music: on (8-bit chiptune, synthesized live)" : "Music: off"}
-        className={`fixed bottom-[calc(8.4rem+env(safe-area-inset-bottom))] right-4 lg:bottom-44 lg:right-5 z-50 h-14 w-14 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white transition-transform hover:scale-110 active:scale-95 ${musicOn ? "bg-gradient-to-br from-fuchsia-500 to-amber-500 animate-floaty" : "bg-slate-500/85"}`}
+        className={`fixed bottom-[calc(8.4rem+env(safe-area-inset-bottom))] right-4 lg:bottom-44 lg:right-5 z-50 h-14 w-14 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white transition-transform hover:scale-110 active:scale-95 ${activeTab === "map" ? "hidden" : ""} ${musicOn ? "bg-gradient-to-br from-fuchsia-500 to-amber-500 animate-floaty" : "bg-slate-500/85"}`}
       >
         {musicOn ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}
       </button>
 
-      {/* Global action bar on EVERY screen (Duck.ai spec): Next Day with a
-          live forecast, refill shortcut and auto play, floating above the dock. */}
+      {/* Global action bar (Duck.ai spec): Next Day with a live forecast,
+          refill shortcut and auto play, floating above the dock. Hidden on
+          the Map, whose diorama menu carries its own Next Day button. */}
+      {activeTab !== "map" && (
       <div className="fixed bottom-[calc(3.4rem+env(safe-area-inset-bottom))] lg:bottom-[5.75rem] inset-x-0 z-40 bg-white/92 backdrop-blur border-t-2 px-3 pt-2 pb-2 flex gap-2 lg:max-w-2xl lg:mx-auto lg:rounded-t-3xl">
         <Button onClick={handleNextDay} disabled={isAutoPlaying || gameState.gameOver} className="flex-[1.4] h-12 rounded-full font-black gap-1.5">
           <Play className="h-5 w-5" /> Next Day <span className="text-[11px] font-bold opacity-85">est {costs.netProfit >= 0 ? "+" : "-"}${Math.abs(costs.netProfit).toFixed(0)}</span>
@@ -247,9 +253,12 @@ const Index = () => {
           <FastForward className="h-5 w-5" />
         </Button>
       </div>
+      )}
 
       {/* Bottom dock: five screens (Duck.ai spec). Wallet and Bank live
-          together on the Finance screen, opened from the top bar. */}
+          together on the Finance screen, opened from the top bar. Hidden on
+          the Map, whose diorama menu carries its own dock. */}
+      {activeTab !== "map" && (
       <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/80 backdrop-blur-xl border-t border-black/10 pt-1 pb-[max(0.3rem,env(safe-area-inset-bottom))] lg:left-1/2 lg:right-auto lg:-translate-x-1/2 lg:w-[600px] lg:bottom-3 lg:rounded-full lg:border-2 lg:border-black/10 lg:shadow-2xl lg:px-3" aria-label="Game screens">
         <div className="grid grid-cols-5">
           {[
@@ -271,6 +280,7 @@ const Index = () => {
           ))}
         </div>
       </nav>
+      )}
 
       <div className="relative z-10 container mx-auto px-4 py-5 pb-56 lg:pb-36 sm:py-8 space-y-7 sm:space-y-10 max-w-7xl">
         <div className={activeTab === "play" ? "space-y-7 sm:space-y-10" : "hidden"}>
@@ -372,6 +382,10 @@ const Index = () => {
             gameState={gameState}
             onUnlockLocation={(id) => apply(unlockLocation(gameState, id))}
             onBuyMachine={(id) => apply(buyMachine(gameState, id))}
+            onNavigate={goToSection}
+            onNextDay={handleNextDay}
+            nextDayEst={costs.netProfit}
+            onOpenSettings={() => setShowSettings(true)}
           />
         </div>
 

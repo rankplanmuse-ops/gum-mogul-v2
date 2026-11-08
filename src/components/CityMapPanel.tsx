@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GameState, Location } from "@/types/game";
 import { CITIES, MACHINE_COST, formatCurrency, machineCapOf } from "@/lib/gameLogic";
-import { Lock, Plus } from "lucide-react";
+import { Lock, Plus, Home, Candy, Castle, Trophy, Map as MapIcon, Play, Cog } from "lucide-react";
 import mapBubbleville from "@/assets/map-bubbleville.jpg";
 import mapNeonbay from "@/assets/map-neonbay.jpg";
 
@@ -44,11 +44,15 @@ interface Props {
   gameState: GameState;
   onUnlockLocation: (locationId: string) => void;
   onBuyMachine: (locationId: string) => void;
+  onNavigate: (tab: string) => void;
+  onNextDay: () => void;
+  nextDayEst: number;
+  onOpenSettings: () => void;
 }
 
 type NodeState = "open" | "available" | "gated";
 
-export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Props) => {
+export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavigate, onNextDay, nextDayEst, onOpenSettings }: Props) => {
   const [activeCity, setActiveCity] = useState<string>("Bubbleville");
   const [selectedId, setSelectedId] = useState<string>("corner");
   const locations = gameState.locations;
@@ -82,8 +86,23 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
         >
           <img src={scene.img} alt={`${activeCity} city diorama`} className="absolute inset-0 h-full w-full" draggable={false} />
 
-          {/* City switcher, floating under the game's top bar. */}
-          <div className="absolute inset-x-2 top-[calc(3.4rem+env(safe-area-inset-top))] z-20 flex gap-2">
+          {/* The map is a full game menu: the global header and footer are
+              hidden on this screen, so the diorama carries its own top row
+              (day, balances into Finance, settings). */}
+          <div className="absolute inset-x-2 top-[calc(0.6rem+env(safe-area-inset-top))] z-20 flex items-center gap-2">
+            <span className="rounded-full bg-slate-950/70 backdrop-blur-md px-3 py-1.5 text-white font-black text-[13px] whitespace-nowrap shadow-lg">📅 Day {gameState.day}</span>
+            <button onClick={() => onNavigate("finance")} className="flex-1 flex items-center justify-center gap-2 rounded-full bg-slate-950/70 backdrop-blur-md text-white font-black text-xs py-1.5 px-2 shadow-lg active:scale-[0.98] transition-transform whitespace-nowrap" aria-label="Open Finance: wallet and bank">
+              <span>💵 ${gameState.cash.toFixed(0)}</span>
+              <span className="text-amber-300">⚡ {gameState.sats.toLocaleString()} sats</span>
+              <span className="text-[11px] uppercase tracking-wide bg-white/20 rounded-full px-2 py-0.5">Finance</span>
+            </button>
+            <button onClick={onOpenSettings} aria-label="Open settings" className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-full bg-slate-950/70 backdrop-blur-md text-white shadow-lg">
+              <Cog className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* City switcher, floating under the menu's own top row. */}
+          <div className="absolute inset-x-2 top-[calc(3.5rem+env(safe-area-inset-top))] z-20 flex gap-2">
             {CITIES.map((city) => {
               const locs = locations.filter((l) => l.city === city);
               const open = locs.filter((l) => l.unlocked).length;
@@ -160,14 +179,14 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
           {cityLocked && (
             <>
               <div className="absolute inset-0 bg-slate-950/40 z-[5]" />
-              <div className="absolute inset-x-0 top-[calc(7.6rem+env(safe-area-inset-top))] bg-slate-950/75 text-white text-center text-xs sm:text-sm font-black py-2 px-3 z-20">
+              <div className="absolute inset-x-0 top-[calc(7.9rem+env(safe-area-inset-top))] bg-slate-950/75 text-white text-center text-xs sm:text-sm font-black py-2 px-3 z-20">
                 🔒 Neon Bay is across the bay. Open the Airport Terminal to unlock this whole city.
               </div>
             </>
           )}
 
           {/* Selected location sheet, floating just above the game's Next Day bar. */}
-          <div className="absolute inset-x-2 bottom-[calc(8.1rem+env(safe-area-inset-bottom))] lg:bottom-[10.4rem] z-20 rounded-3xl bg-slate-950/72 backdrop-blur-md text-white p-3 shadow-2xl">
+          <div className="absolute inset-x-2 bottom-[calc(4.9rem+env(safe-area-inset-bottom))] z-20 rounded-3xl bg-slate-950/72 backdrop-blur-md text-white p-3 shadow-2xl">
             <div className="flex items-center gap-2.5">
               <div className="min-w-0 flex-1">
                 <p className="font-black leading-tight truncate">{selected.name} <span className="text-[11px] font-bold text-white/60">· {selected.city}</span></p>
@@ -191,6 +210,37 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
             {selState === "gated" && (
               <p className="text-[13px] font-black text-amber-300 mt-2 text-center">🔒 Needs {gateName(selected)} open first. Open that building and this one unlocks.</p>
             )}
+          </div>
+
+          {/* The menu's own bottom bar: screen dock plus Next Day, replacing
+              the global footer on this screen. */}
+          <div className="absolute inset-x-2 bottom-[calc(0.6rem+env(safe-area-inset-bottom))] z-20 flex items-stretch gap-2">
+            <nav className="flex items-center gap-0.5 rounded-full bg-slate-950/72 backdrop-blur-md px-1.5 py-1 shadow-2xl" aria-label="Game screens">
+              {[
+                { id: "play", label: "Play", icon: Home },
+                { id: "map", label: "Map", icon: MapIcon },
+                { id: "gums", label: "Gums", icon: Candy },
+                { id: "empire", label: "Empire", icon: Castle },
+                { id: "rewards", label: "Rewards", icon: Trophy },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => onNavigate(tab.id)}
+                  aria-current={tab.id === "map" ? "page" : undefined}
+                  className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-full transition-colors ${tab.id === "map" ? "text-pink-400" : "text-white/75"}`}
+                >
+                  <tab.icon className="h-5 w-5" strokeWidth={tab.id === "map" ? 2.6 : 2} />
+                  <span className={`text-[11px] leading-none ${tab.id === "map" ? "font-black" : "font-semibold"}`}>{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+            <button
+              onClick={onNextDay}
+              disabled={gameState.gameOver}
+              className="flex-1 rounded-full bg-primary text-primary-foreground font-black text-sm shadow-2xl flex items-center justify-center gap-1.5 px-2 whitespace-nowrap active:scale-[0.98] transition-transform disabled:opacity-50"
+            >
+              <Play className="h-5 w-5 shrink-0" /> Next Day <span className="text-[11px] font-bold opacity-85">est {nextDayEst >= 0 ? "+" : "-"}${Math.abs(nextDayEst).toFixed(0)}</span>
+            </button>
           </div>
         </div>
       </div>
