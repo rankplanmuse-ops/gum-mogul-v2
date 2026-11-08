@@ -28,9 +28,6 @@ export const EmpirePanel = ({ gameState, onBuyUpgrade, onMarketingChange, onRest
         <h2 className="text-3xl font-black mb-1">🏰 Your Empire</h2>
         <p className="text-sm font-semibold text-muted-foreground">{totalMachines(gameState)} machines · rent {formatCurrency(dailyRent(gameState))}/day · more traffic means more chewers per machine</p>
         <p className="text-sm font-bold text-fuchsia-700 mt-2">🗺️ Locations live on the Map tab. This screen is marketing and upgrades.</p>
-        </div>
-        </div>
-        ))}
 
           <Card id="marketing" className="bubbly-card p-5 bg-gradient-to-br from-violet-100 to-fuchsia-100 mt-5 scroll-mt-3">
             <h3 className="font-black text-lg flex items-center gap-2"><Megaphone className="h-5 w-5 text-fuchsia-600" /> Marketing</h3>
