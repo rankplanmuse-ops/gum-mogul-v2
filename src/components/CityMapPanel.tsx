@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { GameState, Location } from "@/types/game";
 import { CITIES, MACHINE_COST, formatCurrency, machineCapOf } from "@/lib/gameLogic";
 import { Lock, Plus } from "lucide-react";
-import routeBubbleville from "@/assets/route-bubbleville.jpg";
-import routeNeonbay from "@/assets/route-neonbay.jpg";
+import routeBubbleville from "@/assets/route-bubbleville-3d.jpg";
+import routeNeonbay from "@/assets/route-neonbay-3d.jpg";
 
 // The Route: a winding numbered path over a real photographic street scene.
 // Stop positions sit on the road in each photo, in percent of the scene,
