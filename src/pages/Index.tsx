@@ -8,6 +8,7 @@ import { LightningWalletPanel } from "@/components/LightningWalletPanel";
 import { BitcoinWalletPanel } from "@/components/BitcoinWalletPanel";
 import { EmpirePanel } from "@/components/EmpirePanel";
 import { CityMapPanel } from "@/components/CityMapPanel";
+import { LocationPanel } from "@/components/LocationPanel";
 import { RewardsPanel } from "@/components/RewardsPanel";
 import { InsightsPanel } from "@/components/InsightsPanel";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ import {
   buyBtc, sweepLightningToChain, consolidateUtxos, buyMiningRig, toggleMining,
   stockCapacity, totalMachines, hasUpgrade, SAVE_KEY, ActionResult, LN_CUSTOMER_SHARE,
 } from "@/lib/gameLogic";
-import { Play, FastForward, RotateCcw, HelpCircle, X, Volume2, VolumeX, Home, Map, Candy, Castle, Trophy, Cog } from "lucide-react";
+import { Play, FastForward, RotateCcw, HelpCircle, X, Volume2, VolumeX, Store, Map, Candy, Castle, Trophy, Cog } from "lucide-react";
 import { chiptune, MUSIC_PREF_KEY } from "@/lib/music";
 import { sfxCoin, sfxError, sfxFanfare, setSfxEnabled, SFX_PREF_KEY } from "@/lib/sfx";
 import { toast } from "sonner";
@@ -95,7 +96,10 @@ const Index = () => {
   const [sfxOn, setSfxOn] = useState<boolean>(() => {
     try { return localStorage.getItem(SFX_PREF_KEY) !== "off"; } catch { return true; }
   });
-  const [activeTab, setActiveTab] = useState("play");
+  // The game is built around the Map: it is the home screen. Only a brand
+  // new player (crate still sealed) starts on the Machines screen.
+  const [activeTab, setActiveTab] = useState(() => (gameState.firstMachineUnpacked ? "map" : "play"));
+  const [selectedLocId, setSelectedLocId] = useState("corner");
   // Two unified color modes: Pink (default) and Blue (serious). One switch
   // re-skins every token-driven surface; the choice persists per player.
   const [theme, setTheme] = useState<"pink" | "blue">(() => {
@@ -223,7 +227,7 @@ const Index = () => {
       {/* Persistent top bar on every screen but the Map: day, balances,
           Finance, settings. The diorama is a full game menu with its own
           buttons, so the global header hides there. */}
-      {activeTab !== "map" && (
+      {activeTab !== "map" && activeTab !== "location" && (
       <div className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-black/10">
         <div className="container mx-auto max-w-7xl px-4 py-2 flex items-center gap-2">
           <span className="font-black text-sm whitespace-nowrap">📅 Day {gameState.day}</span>
@@ -243,7 +247,7 @@ const Index = () => {
         onClick={toggleMusic}
         aria-label={musicOn ? "Turn the 8-bit music off" : "Turn the 8-bit music on"}
         title={musicOn ? "Music: on (8-bit chiptune, synthesized live)" : "Music: off"}
-        className={`fixed bottom-[calc(8.4rem+env(safe-area-inset-bottom))] right-4 lg:bottom-44 lg:right-5 z-50 h-14 w-14 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white transition-transform hover:scale-110 active:scale-95 ${activeTab === "map" ? "hidden" : ""} ${musicOn ? (theme === "blue" ? "bg-gradient-to-br from-blue-600 to-teal-400 animate-floaty" : "bg-gradient-to-br from-fuchsia-500 to-amber-500 animate-floaty") : "bg-slate-500/85"}`}
+        className={`fixed bottom-[calc(8.4rem+env(safe-area-inset-bottom))] right-4 lg:bottom-44 lg:right-5 z-50 h-14 w-14 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white transition-transform hover:scale-110 active:scale-95 ${activeTab === "map" || activeTab === "location" ? "hidden" : ""} ${musicOn ? (theme === "blue" ? "bg-gradient-to-br from-blue-600 to-teal-400 animate-floaty" : "bg-gradient-to-br from-fuchsia-500 to-amber-500 animate-floaty") : "bg-slate-500/85"}`}
       >
         {musicOn ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}
       </button>
@@ -251,7 +255,7 @@ const Index = () => {
       {/* Global action bar (Duck.ai spec): Next Day with a live forecast,
           refill shortcut and auto play, floating above the dock. Hidden on
           the Map, whose diorama menu carries its own Next Day button. */}
-      {activeTab !== "map" && (
+      {activeTab !== "map" && activeTab !== "location" && (
       <div className="fixed bottom-[calc(3.4rem+env(safe-area-inset-bottom))] lg:bottom-[5.75rem] inset-x-0 z-40 bg-white/92 backdrop-blur border-t-2 px-3 pt-2 pb-2 flex gap-2 lg:max-w-2xl lg:mx-auto lg:rounded-t-3xl">
         <Button onClick={handleNextDay} disabled={isAutoPlaying || gameState.gameOver} className="flex-[1.4] h-12 rounded-full font-black gap-1.5">
           <Play className="h-5 w-5" /> Next Day <span className="text-[11px] font-bold opacity-85">est {costs.netProfit >= 0 ? "+" : "-"}${Math.abs(costs.netProfit).toFixed(0)}</span>
@@ -268,12 +272,12 @@ const Index = () => {
       {/* Bottom dock: five screens (Duck.ai spec). Wallet and Bank live
           together on the Finance screen, opened from the top bar. Hidden on
           the Map, whose diorama menu carries its own dock. */}
-      {activeTab !== "map" && (
+      {activeTab !== "map" && activeTab !== "location" && (
       <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/80 backdrop-blur-xl border-t border-black/10 pt-1 pb-[max(0.3rem,env(safe-area-inset-bottom))] lg:left-1/2 lg:right-auto lg:-translate-x-1/2 lg:w-[600px] lg:bottom-3 lg:rounded-full lg:border-2 lg:border-black/10 lg:shadow-2xl lg:px-3" aria-label="Game screens">
         <div className="grid grid-cols-5">
           {[
-            { id: "play", label: "Play", icon: Home },
             { id: "map", label: "Map", icon: Map },
+            { id: "play", label: "Machines", icon: Store },
             { id: "gums", label: "Gums", icon: Candy },
             { id: "empire", label: "Empire", icon: Castle },
             { id: "rewards", label: "Rewards", icon: Trophy },
@@ -332,7 +336,7 @@ const Index = () => {
             <img key={crateStep} src={CRATE_STEPS[crateStep].img} alt="Your first gum machine, being unpacked from its wooden crate" className="w-full h-[380px] sm:h-[440px] object-cover mt-3 animate-pop" draggable={false} />
             <div className="p-5 space-y-3 text-center">
               <p className="text-xl font-black">{CRATE_STEPS[crateStep].title}</p>
-              <Button onClick={() => apply(advanceCrate(gameState))} className="w-full h-14 text-lg rounded-full font-black">
+              <Button onClick={() => { const res = advanceCrate(gameState); apply(res); if (res.state.firstMachineUnpacked) goToSection("map"); }} className="w-full h-14 text-lg rounded-full font-black">
                 {CRATE_STEPS[crateStep].btn}
               </Button>
               <p className="text-sm font-bold text-muted-foreground">Every empire starts with one machine.</p>
@@ -393,9 +397,23 @@ const Index = () => {
             onUnlockLocation={(id) => apply(unlockLocation(gameState, id))}
             onBuyMachine={(id) => apply(buyMachine(gameState, id))}
             onNavigate={goToSection}
+            onEnterLocation={(id) => { setSelectedLocId(id); goToSection("location"); }}
             onNextDay={handleNextDay}
             nextDayEst={costs.netProfit}
             onOpenSettings={() => setShowSettings(true)}
+          />
+        </div>
+
+        <div id="location" className={activeTab === "location" ? "" : "hidden"}>
+          <LocationPanel
+            gameState={gameState}
+            locationId={selectedLocId}
+            onBack={() => goToSection("map")}
+            onBuyMachine={(id) => apply(buyMachine(gameState, id))}
+            onUnlockLocation={(id) => apply(unlockLocation(gameState, id))}
+            onNavigate={goToSection}
+            onNextDay={handleNextDay}
+            nextDayEst={costs.netProfit}
           />
         </div>
 

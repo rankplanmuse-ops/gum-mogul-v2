@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GameState, Location } from "@/types/game";
 import { CITIES, MACHINE_COST, formatCurrency, machineCapOf } from "@/lib/gameLogic";
-import { Lock, Plus, Home, Candy, Castle, Trophy, Map as MapIcon, Play, Cog } from "lucide-react";
+import { Lock, Plus, Store, Candy, Castle, Trophy, Map as MapIcon, Play, Cog } from "lucide-react";
+import { LOCATION_ART } from "@/lib/locationArt";
 import mapBubbleville from "@/assets/map-bubbleville.jpg";
 import mapNeonbay from "@/assets/map-neonbay.jpg";
 
@@ -45,6 +46,7 @@ interface Props {
   onUnlockLocation: (locationId: string) => void;
   onBuyMachine: (locationId: string) => void;
   onNavigate: (tab: string) => void;
+  onEnterLocation: (locationId: string) => void;
   onNextDay: () => void;
   nextDayEst: number;
   onOpenSettings: () => void;
@@ -52,7 +54,7 @@ interface Props {
 
 type NodeState = "open" | "available" | "gated";
 
-export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavigate, onNextDay, nextDayEst, onOpenSettings }: Props) => {
+export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavigate, onEnterLocation, onNextDay, nextDayEst, onOpenSettings }: Props) => {
   const [activeCity, setActiveCity] = useState<string>("Bubbleville");
   const [selectedId, setSelectedId] = useState<string>("corner");
   const locations = gameState.locations;
@@ -184,6 +186,9 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavi
           {/* Selected location sheet, floating just above the game's Next Day bar. */}
           <div className="absolute inset-x-2 bottom-[calc(4.9rem+env(safe-area-inset-bottom))] z-20 rounded-3xl bg-slate-950/72 backdrop-blur-md text-white p-3 shadow-2xl">
             <div className="flex items-center gap-2.5">
+              {LOCATION_ART[selected.id] && (
+                <img src={LOCATION_ART[selected.id]} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover border-2 border-white/25" draggable={false} />
+              )}
               <div className="min-w-0 flex-1">
                 <p className="font-black leading-tight truncate">{selected.name} <span className="text-[11px] font-bold text-white/60">· {selected.city}</span></p>
                 <p className="text-[11px] font-bold text-white/70 truncate">{selected.blurb}</p>
@@ -206,6 +211,9 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavi
             {selState === "gated" && (
               <p className="text-[13px] font-black text-amber-300 mt-2 text-center">🔒 Needs {gateName(selected)} open first. Open that building and this one unlocks.</p>
             )}
+            <Button onClick={() => onEnterLocation(selected.id)} variant="outline" className="w-full rounded-full font-black mt-2">
+              Enter {selected.name}
+            </Button>
           </div>
 
           {/* The menu's own bottom bar: screen dock plus Next Day, replacing
@@ -213,8 +221,8 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavi
           <div className="absolute inset-x-2 bottom-[calc(0.6rem+env(safe-area-inset-bottom))] z-20 flex items-stretch gap-2">
             <nav className="flex items-center gap-0.5 rounded-full bg-slate-950/72 backdrop-blur-md px-1.5 py-1 shadow-2xl" aria-label="Game screens">
               {[
-                { id: "play", label: "Play", icon: Home },
                 { id: "map", label: "Map", icon: MapIcon },
+                { id: "play", label: "Machines", icon: Store },
                 { id: "gums", label: "Gums", icon: Candy },
                 { id: "empire", label: "Empire", icon: Castle },
                 { id: "rewards", label: "Rewards", icon: Trophy },
@@ -223,10 +231,10 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavi
                   key={tab.id}
                   onClick={() => onNavigate(tab.id)}
                   aria-current={tab.id === "map" ? "page" : undefined}
-                  className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-full transition-colors ${tab.id === "map" ? "text-primary" : "text-white/75"}`}
+                  aria-label={tab.label}
+                  className={`flex items-center justify-center px-2.5 py-2 rounded-full transition-colors ${tab.id === "map" ? "text-primary bg-white/15" : "text-white/75"}`}
                 >
                   <tab.icon className="h-5 w-5" strokeWidth={tab.id === "map" ? 2.6 : 2} />
-                  <span className={`text-[11px] leading-none ${tab.id === "map" ? "font-black" : "font-semibold"}`}>{tab.label}</span>
                 </button>
               ))}
             </nav>
