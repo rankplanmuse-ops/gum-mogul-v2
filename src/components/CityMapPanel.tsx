@@ -91,11 +91,7 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavi
               (day, balances into Finance, settings). */}
           <div className="absolute inset-x-2 top-[calc(0.6rem+env(safe-area-inset-top))] z-20 flex items-center gap-2">
             <span className="rounded-full bg-slate-950/70 backdrop-blur-md px-3 py-1.5 text-white font-black text-[13px] whitespace-nowrap shadow-lg">📅 Day {gameState.day}</span>
-            <button onClick={() => onNavigate("finance")} className="flex-1 flex items-center justify-center gap-2 rounded-full bg-slate-950/70 backdrop-blur-md text-white font-black text-xs py-1.5 px-2 shadow-lg active:scale-[0.98] transition-transform whitespace-nowrap" aria-label="Open Finance: wallet and bank">
-              <span>💵 ${gameState.cash.toFixed(0)}</span>
-              <span className="text-amber-300">⚡ {gameState.sats.toLocaleString()} sats</span>
-              <span className="text-[11px] uppercase tracking-wide bg-white/20 rounded-full px-2 py-0.5">Finance</span>
-            </button>
+            <span className="flex-1" />
             <button onClick={onOpenSettings} aria-label="Open settings" className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-full bg-slate-950/70 backdrop-blur-md text-white shadow-lg">
               <Cog className="h-4 w-4" />
             </button>
