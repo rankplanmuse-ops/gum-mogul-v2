@@ -217,7 +217,7 @@ const Index = () => {
           <button onClick={() => goToSection("finance")} className="flex-1 flex items-center justify-center gap-3 rounded-full bg-slate-900 text-white font-black text-sm py-1.5 px-3 active:scale-[0.98] transition-transform" aria-label="Open Finance: wallet and bank">
             <span>💵 ${gameState.cash.toFixed(0)}</span>
             <span className="text-amber-300">⚡ {gameState.sats.toLocaleString()} sats</span>
-            <span className="text-[10px] uppercase tracking-wide bg-white/20 rounded-full px-2 py-0.5">Finance</span>
+            <span className="text-[11px] uppercase tracking-wide bg-white/20 rounded-full px-2 py-0.5">Finance</span>
           </button>
           <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full bg-white border-2 border-pink-200 text-pink-600">
             <Cog className="h-4 w-4" />
@@ -266,7 +266,7 @@ const Index = () => {
               className={`flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-colors ${activeTab === tab.id ? "text-primary" : "text-slate-500"}`}
             >
               <tab.icon className="h-5 w-5" strokeWidth={activeTab === tab.id ? 2.6 : 2} />
-              <span className={`text-[9px] leading-none ${activeTab === tab.id ? "font-black" : "font-semibold"}`}>{tab.label}</span>
+              <span className={`text-[11px] leading-none ${activeTab === tab.id ? "font-black" : "font-semibold"}`}>{tab.label}</span>
             </button>
           ))}
         </div>

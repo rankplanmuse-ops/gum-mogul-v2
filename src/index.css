@@ -91,7 +91,11 @@
   * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
-    font-family: ui-rounded, "SF Pro Rounded", "Baloo 2", system-ui, sans-serif;
+    /* Text face: Nunito, loaded in index.html. Rounded, friendly, and far
+       more legible at small sizes than a system sans. Type scale for the
+       whole game: 11px floor for labels, 12-13 captions, 14-15 body,
+       20-24 card titles, 30+ screen titles. Nothing ships under 11px. */
+    font-family: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
   }
   /* Game display type: a heavy rounded face for every heading and title,
      the single biggest "real game, not web app" signal. */

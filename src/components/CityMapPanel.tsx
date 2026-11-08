@@ -95,7 +95,7 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
                   }`}
                 >
                   <span className="block font-black text-[13px] leading-tight">{city === "Neon Bay" ? "🌃" : "🏠"} {city}</span>
-                  <span className={`block text-[10px] font-bold ${isActive ? "text-slate-500" : "text-white/70"}`}>{open} of {locs.length} stops open</span>
+                  <span className={`block text-[11px] font-bold ${isActive ? "text-slate-500" : "text-white/70"}`}>{open} of {locs.length} stops open</span>
                   <span className={`block h-1 rounded-full mt-1 overflow-hidden ${isActive ? "bg-slate-900/15" : "bg-white/25"}`}>
                     <span className="block h-full rounded-full bg-emerald-500" style={{ width: `${(open / locs.length) * 100}%` }} />
                   </span>
@@ -128,12 +128,12 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
                 >
                   {idx + 1}
                   {loc.unlocked && (
-                    <span className="absolute -bottom-1.5 -right-2 bg-emerald-600 text-white text-[10px] font-black rounded-full px-1.5 py-0.5 shadow">
+                    <span className="absolute -bottom-1.5 -right-2 bg-emerald-600 text-white text-[11px] font-black rounded-full px-1.5 py-0.5 shadow">
                       {loc.machines}/{machineCapOf(loc)}
                     </span>
                   )}
                 </span>
-                <span className="mt-1 text-[10px] sm:text-[11px] font-black leading-none px-2 py-1 rounded-md bg-[#2b2118]/85 text-amber-50 shadow whitespace-nowrap">
+                <span className="mt-1 text-[11px] sm:text-xs font-black leading-none px-2 py-1 rounded-md bg-[#2b2118]/85 text-amber-50 shadow whitespace-nowrap">
                   {loc.name}
                   {st !== "open" && <span className="text-amber-300"> · {formatCurrency(loc.unlockCost)}</span>}
                 </span>
