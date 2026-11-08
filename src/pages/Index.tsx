@@ -34,6 +34,7 @@ const CRATE_STEPS = [
   { img: crateStage4, title: "Your first machine. Old school, and all yours.", btn: "Start selling" },
 ];
 const CRATE_STEP_NAMES = ["Sealed", "Open", "Uncovered", "Ready"];
+const THEME_KEY = "gum-mogul-theme";
 
 const loadSave = (): GameState => {
   try {
@@ -95,6 +96,15 @@ const Index = () => {
     try { return localStorage.getItem(SFX_PREF_KEY) !== "off"; } catch { return true; }
   });
   const [activeTab, setActiveTab] = useState("play");
+  // Two unified color modes: Pink (default) and Blue (serious). One switch
+  // re-skins every token-driven surface; the choice persists per player.
+  const [theme, setTheme] = useState<"pink" | "blue">(() => {
+    try { return localStorage.getItem(THEME_KEY) === "blue" ? "blue" : "pink"; } catch { return "pink"; }
+  });
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem(THEME_KEY, theme); } catch { /* ignore */ }
+  }, [theme]);
 
   useEffect(() => { setSfxEnabled(sfxOn); }, [sfxOn]);
   const toggleSfx = () => {
@@ -222,7 +232,7 @@ const Index = () => {
             <span className="text-amber-300">⚡ {gameState.sats.toLocaleString()} sats</span>
             <span className="text-[11px] uppercase tracking-wide bg-white/20 rounded-full px-2 py-0.5">Finance</span>
           </button>
-          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full bg-white border-2 border-pink-200 text-pink-600">
+          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full bg-white border-2 border-primary/30 text-primary">
             <Cog className="h-4 w-4" />
           </button>
         </div>
@@ -233,7 +243,7 @@ const Index = () => {
         onClick={toggleMusic}
         aria-label={musicOn ? "Turn the 8-bit music off" : "Turn the 8-bit music on"}
         title={musicOn ? "Music: on (8-bit chiptune, synthesized live)" : "Music: off"}
-        className={`fixed bottom-[calc(8.4rem+env(safe-area-inset-bottom))] right-4 lg:bottom-44 lg:right-5 z-50 h-14 w-14 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white transition-transform hover:scale-110 active:scale-95 ${activeTab === "map" ? "hidden" : ""} ${musicOn ? "bg-gradient-to-br from-fuchsia-500 to-amber-500 animate-floaty" : "bg-slate-500/85"}`}
+        className={`fixed bottom-[calc(8.4rem+env(safe-area-inset-bottom))] right-4 lg:bottom-44 lg:right-5 z-50 h-14 w-14 rounded-full border-[3px] border-white shadow-xl flex items-center justify-center text-white transition-transform hover:scale-110 active:scale-95 ${activeTab === "map" ? "hidden" : ""} ${musicOn ? (theme === "blue" ? "bg-gradient-to-br from-blue-600 to-teal-400 animate-floaty" : "bg-gradient-to-br from-fuchsia-500 to-amber-500 animate-floaty") : "bg-slate-500/85"}`}
       >
         {musicOn ? <Volume2 className="h-7 w-7" /> : <VolumeX className="h-7 w-7" />}
       </button>
@@ -286,14 +296,14 @@ const Index = () => {
         <div className={activeTab === "play" ? "space-y-7 sm:space-y-10" : "hidden"}>
         <header id="play" className="text-center space-y-2">
           <div className="text-5xl sm:text-6xl animate-floaty inline-block">🍬</div>
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-pink-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+          <h1 className={`text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r ${theme === "blue" ? "from-blue-700 via-sky-500 to-teal-400" : "from-pink-600 via-fuchsia-500 to-amber-500"} bg-clip-text text-transparent drop-shadow-sm`}>
             Gum Mogul
           </h1>
           <p className="text-base sm:text-lg font-bold text-muted-foreground">Build a bubblegum empire, one machine at a time.</p>
           <button onClick={() => setShowHelp(!showHelp)} className="inline-flex items-center gap-1 font-black text-primary underline underline-offset-4">
             {showHelp ? <X className="h-4 w-4" /> : <HelpCircle className="h-4 w-4" />} How to play
           </button>
-          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="ml-3 inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-white border-[3px] border-pink-200 shadow-[0_4px_0_rgba(190,24,93,0.18)] text-pink-600 align-middle">
+          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="ml-3 inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-white border-[3px] border-primary/30 shadow-[0_4px_0_rgba(0,0,0,0.12)] text-primary align-middle">
             <Cog className="h-5 w-5" />
           </button>
           {showHelp && (
@@ -349,7 +359,7 @@ const Index = () => {
             <VendingMachine gumCount={totalStock(gameState)} capacity={stockCapacity(gameState)} machines={totalMachines(gameState)} tickerText={hasUpgrade(gameState, "displays") ? gameState.products.filter((p) => p.unlocked).map((p) => `${p.emoji} ${p.name.toUpperCase()} $${p.sellPrice.toFixed(2)}`).join(" · ") + " · PAY WITH LIGHTNING ⚡ NO CARD FEES" : undefined} />
             <div className="order-first lg:order-none space-y-3">
               <div className="flex gap-3">
-                <Button onClick={handleNextDay} disabled={isAutoPlaying || gameState.gameOver} className="flex-[1.7] h-14 text-lg rounded-full font-black gap-2 ring-4 ring-pink-300/50">
+                <Button onClick={handleNextDay} disabled={isAutoPlaying || gameState.gameOver} className="flex-[1.7] h-14 text-lg rounded-full font-black gap-2 ring-4 ring-primary/30">
                   <Play className="h-5 w-5" /> Next Day
                 </Button>
                 <Button onClick={() => setIsAutoPlaying(!isAutoPlaying)} variant={isAutoPlaying ? "destructive" : "outline"} className="flex-1 h-14 text-base rounded-full font-black gap-2 bg-white/60 text-slate-600">
@@ -444,10 +454,17 @@ const Index = () => {
 
       {showSettings && (
         <div className="fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-[2px] flex items-center justify-center p-4" onClick={() => setShowSettings(false)}>
-          <div className="game-frame relative bg-gradient-to-b from-sky-100 via-white to-pink-50 max-w-sm w-full px-6 pb-6 pt-10 animate-pop" onClick={(e) => e.stopPropagation()}>
+          <div className={`game-frame relative bg-gradient-to-b from-sky-100 via-white ${theme === "blue" ? "to-blue-50" : "to-pink-50"} max-w-sm w-full px-6 pb-6 pt-10 animate-pop`} onClick={(e) => e.stopPropagation()}>
             <div className="ribbon-title absolute -top-5 left-1/2 -translate-x-1/2 px-10 py-2 text-2xl font-black font-display whitespace-nowrap">Settings</div>
             <button onClick={() => setShowSettings(false)} aria-label="Close settings" className="absolute -top-3 right-3 h-10 w-10 rounded-xl bg-white border-[3px] border-rose-300 shadow-[0_4px_0_rgba(190,24,93,0.2)] text-rose-500 font-black text-lg leading-none">✕</button>
             <div className="space-y-2.5 mt-1">
+              <div className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 px-4 py-3 font-black">
+                <span>🎨 Color mode</span>
+                <span className="flex gap-1.5">
+                  <button onClick={() => setTheme("pink")} aria-pressed={theme === "pink"} className={`rounded-full px-3 py-1 text-sm ${theme === "pink" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>Pink</button>
+                  <button onClick={() => setTheme("blue")} aria-pressed={theme === "blue"} className={`rounded-full px-3 py-1 text-sm ${theme === "blue" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>Blue</button>
+                </span>
+              </div>
               <button onClick={toggleMusic} className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 px-4 py-3 font-black">
                 <span>🎵 Music: Gum Mogul Overture</span><span className={musicOn ? "text-accent" : "text-muted-foreground"}>{musicOn ? "ON" : "OFF"}</span>
               </button>

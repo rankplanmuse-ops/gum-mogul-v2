@@ -23,7 +23,7 @@ export const FinancialDashboard = ({ gameState, dailyProfit, simple }: Props) =>
   const pct = Math.min(100, Math.max(0, (worth / next.threshold) * 100));
   const ladder = Array.from({ length: Math.min(claimed + 2, 8) }, (_, i) => milestoneAt(i));
   const stats = [
-    { label: "Cash", value: formatCurrency(gameState.cash), icon: Wallet, cls: gameState.cash < 0 ? "text-loss" : "text-foreground", bg: "bg-pink-100" },
+    { label: "Cash", value: formatCurrency(gameState.cash), icon: Wallet, cls: gameState.cash < 0 ? "text-loss" : "text-foreground", bg: "bg-[hsl(var(--primary)/0.12)]" },
     { label: "Sats Wallet", value: formatSats(gameState.sats), icon: Zap, cls: "text-amber-500", bg: "bg-amber-100" },
     { label: "Reputation", value: `${Math.round(gameState.reputation)} / 100`, icon: Heart, cls: "text-rose-500", bg: "bg-rose-100" },
     { label: "Day", value: `${gameState.day}`, icon: CalendarDays, cls: "text-foreground", bg: "bg-sky-100" },
@@ -47,7 +47,7 @@ export const FinancialDashboard = ({ gameState, dailyProfit, simple }: Props) =>
         ))}
       </div>
       )}
-      <Card className="bubbly-card p-5 bg-gradient-to-r from-fuchsia-500 via-pink-500 to-amber-400 text-white border-none">
+      <Card className="bubbly-card p-5 bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--secondary))] to-[hsl(var(--warning))] text-white border-none">
         <div className="flex items-center gap-3">
           <Crown className="h-8 w-8 animate-floaty shrink-0" />
           <div className="min-w-0">
@@ -65,7 +65,7 @@ export const FinancialDashboard = ({ gameState, dailyProfit, simple }: Props) =>
         {!simple && (
         <div className="flex flex-nowrap gap-1.5 mt-3 overflow-x-auto h-7 items-center pr-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,black_88%,transparent_100%)]">
           {ladder.map((m, i) => (
-            <span key={m.threshold} className={`text-[11px] font-black rounded-full px-2.5 py-1 shrink-0 whitespace-nowrap ${i < claimed ? "bg-white text-pink-600" : i === claimed ? "bg-black/25 text-white ring-2 ring-white" : "bg-white/20 text-white/70"}`}>
+            <span key={m.threshold} className={`text-[11px] font-black rounded-full px-2.5 py-1 shrink-0 whitespace-nowrap ${i < claimed ? "bg-white text-[hsl(var(--primary-edge))]" : i === claimed ? "bg-black/25 text-white ring-2 ring-white" : "bg-white/20 text-white/70"}`}>
               {i < claimed ? "✅" : m.emoji} {m.title} {compactMoney(m.threshold)}
             </span>
           ))}

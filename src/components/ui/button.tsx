@@ -11,10 +11,10 @@ const buttonVariants = cva(
       variant: {
         // Classic Bubble role system (user pick, 2026-11-06): gradient dome,
         // top shine, hard ledge shadow that collapses when pressed.
-        default: "bg-gradient-to-b from-pink-400 to-pink-600 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.55),inset_0_-3px_0_rgba(0,0,0,0.12),0_5px_0_#9d174d,0_10px_16px_rgba(219,39,119,0.35)] hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_1px_0_#9d174d]",
+        default: "bg-gradient-to-b from-[hsl(var(--primary-light))] to-[hsl(var(--primary))] text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.55),inset_0_-3px_0_rgba(0,0,0,0.12),0_5px_0_hsl(var(--primary-edge)),0_10px_16px_hsl(var(--primary)/0.35)] hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_1px_0_hsl(var(--primary-edge))]",
         destructive: "bg-gradient-to-b from-red-300 to-red-600 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.5),inset_0_-3px_0_rgba(0,0,0,0.12),0_5px_0_#7f1d1d,0_10px_16px_rgba(220,38,38,0.3)] hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_1px_0_#7f1d1d]",
-        outline: "bg-white text-[#9d174d] shadow-[inset_0_0_0_3px_#f9a8d4,0_4px_0_#fbcfe8] hover:bg-pink-50 active:translate-y-1 active:shadow-[inset_0_0_0_3px_#f9a8d4,0_1px_0_#fbcfe8]",
-        secondary: "bg-gradient-to-b from-violet-300 to-violet-500 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.5),inset_0_-3px_0_rgba(0,0,0,0.1),0_5px_0_#5b21b6,0_10px_16px_rgba(139,92,246,0.3)] hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_1px_0_#5b21b6]",
+        outline: "bg-white text-[hsl(var(--primary-edge))] shadow-[inset_0_0_0_3px_hsl(var(--primary)/0.45),0_4px_0_hsl(var(--primary)/0.18)] hover:bg-[hsl(var(--muted))] active:translate-y-1 active:shadow-[inset_0_0_0_3px_hsl(var(--primary)/0.45),0_1px_0_hsl(var(--primary)/0.18)]",
+        secondary: "bg-gradient-to-b from-[hsl(var(--secondary-light))] to-[hsl(var(--secondary))] text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.5),inset_0_-3px_0_rgba(0,0,0,0.1),0_5px_0_hsl(var(--secondary-edge)),0_10px_16px_hsl(var(--secondary)/0.3)] hover:brightness-105 active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_1px_0_hsl(var(--secondary-edge))]",
         ghost: "hover:bg-accent hover:text-accent-foreground active:translate-y-0.5",
         link: "text-primary underline-offset-4 hover:underline",
       },

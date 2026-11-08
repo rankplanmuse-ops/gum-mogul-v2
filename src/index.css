@@ -12,8 +12,12 @@
     --popover: 0 0% 100%;
     --popover-foreground: 320 30% 14%;
     --primary: 330 85% 55%;
+    --primary-light: 330 85% 68%;
+    --primary-edge: 335 74% 35%;
     --primary-foreground: 0 0% 100%;
     --secondary: 262 80% 62%;
+    --secondary-light: 262 85% 76%;
+    --secondary-edge: 262 72% 42%;
     --secondary-foreground: 0 0% 100%;
     --muted: 330 60% 93%;
     --muted-foreground: 320 18% 37%;
@@ -44,6 +48,45 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  /* Blue mode: the serious scheme (modern city, steel and teal). Same token
+     names as the pink default, so every surface re-skins from one switch.
+     Pink stays the gum accent inside the art; sats stay amber in both. */
+  [data-theme="blue"] {
+    --background: 210 70% 96%;
+    --foreground: 215 35% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 35% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 35% 14%;
+    --primary: 215 85% 45%;
+    --primary-light: 215 90% 64%;
+    --primary-edge: 215 72% 27%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 190 65% 32%;
+    --secondary-light: 190 60% 46%;
+    --secondary-edge: 190 72% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 45% 91%;
+    --muted-foreground: 215 20% 38%;
+    --accent: 172 60% 34%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 35% 85%;
+    --input: 210 35% 85%;
+    --ring: 215 85% 45%;
+    --success: 172 60% 34%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 85% 45%;
+    --warning-foreground: 0 0% 100%;
+    --info: 200 85% 45%;
+    --info-foreground: 0 0% 100%;
+    --profit: 172 60% 32%;
+    --loss: 0 84% 58%;
+    --neutral: 215 60% 45%;
+    --machine-red: 210 70% 50%;
+    --machine-chrome: 0 0% 85%;
   }
   .dark {
     --background: 320 30% 10%;
@@ -175,9 +218,9 @@
      none of these three layers. */
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -4px 0 rgba(160, 20, 90, 0.07),
-    0 6px 0 rgba(190, 24, 93, 0.13),
-    0 24px 38px -18px rgba(219, 39, 119, 0.38);
+    inset 0 -4px 0 hsl(var(--primary-edge) / 0.07),
+    0 6px 0 hsl(var(--primary) / 0.13),
+    0 24px 38px -18px hsl(var(--primary) / 0.38);
 }
 /* The stage behind the UI: candy-dot pattern on a pink-to-sky wash with
    darkened edges (vignette), so bright panels sit ON something. */
@@ -188,6 +231,17 @@
     radial-gradient(rgba(14, 165, 233, 0.10) 2px, transparent 2.6px),
     radial-gradient(ellipse 120% 90% at 50% 45%, rgba(0, 0, 0, 0) 62%, rgba(88, 10, 50, 0.16) 100%),
     linear-gradient(180deg, #fbcfe8 0%, #fdf2f8 34%, #e0f2fe 100%);
+  background-size: auto, 26px 26px, 26px 26px, auto, auto;
+  background-position: 0 0, 0 0, 13px 13px, 0 0, 0 0;
+}
+/* Blue mode scene: steel dots on an ice-to-sky wash, slate vignette. */
+[data-theme="blue"] .game-scene {
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 60%),
+    radial-gradient(rgba(30, 90, 160, 0.09) 2px, transparent 2.6px),
+    radial-gradient(rgba(13, 148, 136, 0.10) 2px, transparent 2.6px),
+    radial-gradient(ellipse 120% 90% at 50% 45%, rgba(0, 0, 0, 0) 62%, rgba(10, 30, 60, 0.16) 100%),
+    linear-gradient(180deg, #bfdbfe 0%, #eff6ff 34%, #e0f2f1 100%);
   background-size: auto, 26px 26px, 26px 26px, auto, auto;
   background-position: 0 0, 0 0, 13px 13px, 0 0, 0 0;
 }

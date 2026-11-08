@@ -223,7 +223,7 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine, onNavi
                   key={tab.id}
                   onClick={() => onNavigate(tab.id)}
                   aria-current={tab.id === "map" ? "page" : undefined}
-                  className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-full transition-colors ${tab.id === "map" ? "text-pink-400" : "text-white/75"}`}
+                  className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-full transition-colors ${tab.id === "map" ? "text-primary" : "text-white/75"}`}
                 >
                   <tab.icon className="h-5 w-5" strokeWidth={tab.id === "map" ? 2.6 : 2} />
                   <span className={`text-[11px] leading-none ${tab.id === "map" ? "font-black" : "font-semibold"}`}>{tab.label}</span>
