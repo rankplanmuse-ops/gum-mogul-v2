@@ -4,21 +4,35 @@ import { Button } from "@/components/ui/button";
 import { GameState, Location } from "@/types/game";
 import { CITIES, MACHINE_COST, formatCurrency, machineCapOf } from "@/lib/gameLogic";
 import { Lock, Plus } from "lucide-react";
+import routeBubbleville from "@/assets/route-bubbleville.jpg";
+import routeNeonbay from "@/assets/route-neonbay.jpg";
 
-// Node positions on each city's map, in percent of the map area.
-const NODE_POS: Record<string, { x: number; y: number }> = {
-  corner: { x: 10, y: 64 },
-  school: { x: 26, y: 30 },
-  bus: { x: 42, y: 66 },
-  arcade: { x: 56, y: 28 },
-  university: { x: 68, y: 62 },
-  mall: { x: 80, y: 30 },
-  beach: { x: 90, y: 66 },
-  airport: { x: 95, y: 14 },
-  ferry: { x: 14, y: 58 },
-  nightmarket: { x: 38, y: 30 },
-  tech: { x: 62, y: 60 },
-  kiosk: { x: 85, y: 32 },
+// The Route: a winding numbered path over a real photographic street scene.
+// Stop positions sit on the road in each photo, in percent of the scene,
+// ordered bottom (start) to top (endgame), Candy Crush style.
+const SCENES: Record<string, { img: string; stops: Record<string, { x: number; y: number }> }> = {
+  Bubbleville: {
+    img: routeBubbleville,
+    stops: {
+      corner: { x: 32, y: 93 },
+      school: { x: 52, y: 79 },
+      bus: { x: 58, y: 66 },
+      arcade: { x: 49, y: 54 },
+      university: { x: 43, y: 42 },
+      mall: { x: 47, y: 30 },
+      beach: { x: 55, y: 17 },
+      airport: { x: 58, y: 6 },
+    },
+  },
+  "Neon Bay": {
+    img: routeNeonbay,
+    stops: {
+      ferry: { x: 45, y: 93 },
+      nightmarket: { x: 47, y: 68 },
+      tech: { x: 63, y: 45 },
+      kiosk: { x: 60, y: 27 },
+    },
+  },
 };
 
 interface Props {
@@ -30,6 +44,7 @@ interface Props {
 type NodeState = "open" | "available" | "gated";
 
 export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Props) => {
+  const [activeCity, setActiveCity] = useState<string>("Bubbleville");
   const [selectedId, setSelectedId] = useState<string>("corner");
   const locations = gameState.locations;
   const selected = locations.find((l) => l.id === selectedId) ?? locations[0];
@@ -39,83 +54,108 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
   const nodeState = (loc: Location): NodeState => (loc.unlocked ? "open" : gateMet(loc) ? "available" : "gated");
   const gateName = (loc: Location) => locations.find((l) => l.id === loc.requiresLocation)?.name ?? "";
 
-  const renderCity = (city: string) => {
-    const cityLocs = locations.filter((l) => l.city === city);
-    const dark = city === "Neon Bay";
-    const cityLocked = dark && !locations.find((l) => l.id === "airport")?.unlocked;
-    const route = cityLocs.map((l) => `${NODE_POS[l.id]?.x ?? 50},${NODE_POS[l.id]?.y ?? 50}`).join(" ");
-    return (
-      <div key={city} className="mt-5">
-        <h3 className="text-xl font-black">
-          {dark ? "🌃" : "🏠"} {city}
-          {dark && <span className="text-xs font-bold text-muted-foreground"> · opens once the Airport Terminal is open</span>}
-        </h3>
-        <div
-          className={`relative mt-3 rounded-[1.75rem] border-[3px] overflow-hidden aspect-[4/3] sm:aspect-[16/8] ${
-            dark
-              ? "border-indigo-300/60 bg-gradient-to-b from-indigo-950 via-purple-900 to-slate-900"
-              : "border-emerald-200 bg-gradient-to-b from-sky-200 via-emerald-50 to-amber-100"
-          }`}
-        >
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-            <polyline points={route} fill="none" stroke={dark ? "#f0abfc" : "#ffffff"} strokeWidth="0.7" strokeDasharray="2.2 1.6" opacity="0.8" />
-          </svg>
-          {cityLocs.map((loc) => {
-            const pos = NODE_POS[loc.id] ?? { x: 50, y: 50 };
-            const st = nodeState(loc);
-            const isSel = loc.id === selectedId;
-            return (
-              <button
-                key={loc.id}
-                onClick={() => setSelectedId(loc.id)}
-                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 group"
-                style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-                aria-label={`${loc.name}: ${st === "open" ? "open" : st === "available" ? "available to open" : `locked, needs ${gateName(loc)}`}`}
-              >
-                <span
-                  className={`relative h-12 w-12 sm:h-14 sm:w-14 rounded-full border-[3px] flex items-center justify-center text-2xl sm:text-[1.7rem] shadow-lg transition-transform group-hover:scale-110 ${
-                    st === "open"
-                      ? "bg-white border-emerald-400"
-                      : st === "available"
-                        ? "bg-amber-50 border-amber-400 animate-pulse"
-                        : "bg-slate-200 border-slate-400 grayscale opacity-80"
-                  } ${isSel ? "ring-4 ring-primary scale-110" : ""}`}
-                >
-                  {st === "gated" ? "🔒" : loc.emoji}
-                  {loc.unlocked && (
-                    <span className="absolute -bottom-1.5 -right-1.5 bg-primary text-white text-[10px] font-black rounded-full px-1.5 py-0.5 shadow">
-                      {loc.machines}/{machineCapOf(loc)}
-                    </span>
-                  )}
-                </span>
-                <span className={`text-[10px] sm:text-[11px] font-black leading-none px-2 py-1 rounded-full shadow ${dark ? "bg-white/90 text-slate-800" : "bg-white/85 text-slate-700"}`}>
-                  {loc.name}
-                </span>
-              </button>
-            );
-          })}
-          {cityLocked && (
-            <div className="absolute inset-x-0 bottom-0 bg-slate-950/70 text-white text-center text-xs sm:text-sm font-black py-2">
-              🔒 Neon Bay is across the bay. Open the Airport Terminal to unlock this whole city.
-            </div>
-          )}
-        </div>
-      </div>
-    );
+  const selectCity = (city: string) => {
+    setActiveCity(city);
+    const first = locations.find((l) => l.city === city);
+    if (first && selected.city !== city) setSelectedId(first.id);
   };
 
+  const cityLocs = locations.filter((l) => l.city === activeCity);
+  const scene = SCENES[activeCity];
+  const dark = activeCity === "Neon Bay";
+  const cityLocked = dark && !locations.find((l) => l.id === "airport")?.unlocked;
+
+  const renderScene = () => (
+    <div className="relative mt-3 rounded-[1.75rem] border-[3px] border-stone-700/60 overflow-hidden shadow-2xl max-w-md mx-auto">
+      <img src={scene.img} alt={`${activeCity} street scene`} className="block w-full h-auto" draggable={false} />
+      {cityLocs.map((loc, idx) => {
+        const pos = scene.stops[loc.id] ?? { x: 50, y: 50 };
+        const st = nodeState(loc);
+        const isSel = loc.id === selectedId;
+        return (
+          <button
+            key={loc.id}
+            onClick={() => setSelectedId(loc.id)}
+            className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group z-10"
+            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            aria-label={`Stop ${idx + 1}: ${loc.name}: ${st === "open" ? "open" : st === "available" ? "available to open" : `locked, needs ${gateName(loc)}`}`}
+          >
+            <span
+              className={`relative h-11 w-11 sm:h-12 sm:w-12 rounded-full border-[3px] flex items-center justify-center font-black text-lg shadow-[0_6px_16px_rgba(0,0,0,0.45)] transition-transform group-hover:scale-110 ${
+                st === "open"
+                  ? "bg-amber-50 border-amber-900 text-stone-900"
+                  : st === "available"
+                    ? "bg-amber-300 border-amber-900 text-stone-900 animate-pulse"
+                    : "bg-stone-400 border-stone-700 text-stone-600 grayscale"
+              } ${isSel ? "ring-4 ring-white scale-110" : ""}`}
+            >
+              {idx + 1}
+              {loc.unlocked && (
+                <span className="absolute -bottom-1.5 -right-2 bg-emerald-600 text-white text-[10px] font-black rounded-full px-1.5 py-0.5 shadow">
+                  {loc.machines}/{machineCapOf(loc)}
+                </span>
+              )}
+            </span>
+            <span className="mt-1 text-[10px] sm:text-[11px] font-black leading-none px-2 py-1 rounded-md bg-[#2b2118]/85 text-amber-50 shadow whitespace-nowrap">
+              {loc.name}
+              {st !== "open" && <span className="text-amber-300"> · {formatCurrency(loc.unlockCost)}</span>}
+            </span>
+          </button>
+        );
+      })}
+      {cityLocked && (
+        <>
+          <div className="absolute inset-0 bg-slate-950/40" />
+          <div className="absolute inset-x-0 bottom-0 bg-slate-950/75 text-white text-center text-xs sm:text-sm font-black py-2 z-20">
+            🔒 Neon Bay is across the bay. Open the Airport Terminal to unlock this whole city.
+          </div>
+        </>
+      )}
+    </div>
+  );
+
   const selState = nodeState(selected);
+  const selIndex = locations.filter((l) => l.city === selected.city).findIndex((l) => l.id === selected.id);
+
   return (
     <div>
-      <h2 className="text-3xl font-black mb-1">🗺️ City Map</h2>
+      <h2 className="text-3xl font-black mb-1">🛣️ The Route</h2>
       <p className="text-sm font-semibold text-muted-foreground">
-        {locations.filter((l) => l.unlocked).length} of {locations.length} locations open · tap a pin to manage it · new cities and spots unlock as the empire grows
+        {locations.filter((l) => l.unlocked).length} of {locations.length} locations open · follow the road up: every numbered stop is a new spot for your machines
       </p>
-      {CITIES.map(renderCity)}
+
+      <div className="flex gap-2 mt-4" role="tablist" aria-label="Choose a city">
+        {CITIES.map((city) => {
+          const locs = locations.filter((l) => l.city === city);
+          const open = locs.filter((l) => l.unlocked).length;
+          const isActive = city === activeCity;
+          return (
+            <button
+              key={city}
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => selectCity(city)}
+              className={`flex-1 rounded-2xl border-[3px] px-3 py-2 text-left transition-transform hover:scale-[1.02] ${
+                isActive ? "border-primary bg-primary/10" : "border-border bg-card/60"
+              }`}
+            >
+              <span className="block font-black text-sm sm:text-base">{city === "Neon Bay" ? "🌃" : "🏠"} {city}</span>
+              <span className="block text-[11px] font-bold text-muted-foreground">{open} of {locs.length} stops open</span>
+              <span className="block h-1.5 rounded-full bg-muted mt-1.5 overflow-hidden">
+                <span className="block h-full rounded-full bg-emerald-500" style={{ width: `${(open / locs.length) * 100}%` }} />
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {renderScene()}
 
       <Card className="bubbly-card p-5 mt-5">
         <div className="flex items-center gap-3">
-          <div className="text-4xl animate-floaty">{selected.emoji}</div>
+          <span className="h-11 w-11 shrink-0 rounded-full border-[3px] border-amber-900 bg-amber-50 text-stone-900 flex items-center justify-center font-black text-lg shadow">
+            {selIndex + 1}
+          </span>
           <div>
             <h3 className="font-black text-lg leading-tight">
               {selected.name} <span className="text-xs font-bold text-muted-foreground">· {selected.city}</span>
@@ -139,7 +179,7 @@ export const CityMapPanel = ({ gameState, onUnlockLocation, onBuyMachine }: Prop
           </Button>
         )}
         {selState === "gated" && (
-          <p className="text-sm font-black text-amber-600 mt-4 text-center">🔒 Needs {gateName(selected)} open first. Clear that pin and this whole branch unlocks.</p>
+          <p className="text-sm font-black text-amber-600 mt-4 text-center">🔒 Needs {gateName(selected)} open first. Clear that stop and this whole branch unlocks.</p>
         )}
       </Card>
     </div>
