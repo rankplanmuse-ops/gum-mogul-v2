@@ -145,6 +145,8 @@ export interface GameState {
   negativeDays: number;
   gameOver: boolean;
   mogulReached: boolean;
+  firstMachineUnpacked: boolean; // false while the first machine is still in its crate
+  crateStep: number; // 0 sealed, 1 open, 2 uncovered, 3 ready to start
   pendingEvent: GameEvent | null;
   lastDay: LastDaySummary | null;
 }

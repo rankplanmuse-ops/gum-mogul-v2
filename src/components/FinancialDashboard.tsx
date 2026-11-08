@@ -7,6 +7,7 @@ import { Wallet, Zap, Crown, Heart, CalendarDays } from "lucide-react";
 interface Props {
   gameState: GameState;
   dailyProfit: number;
+  simple?: boolean; // beginners: milestone card only, no stat grid, no fine print
 }
 
 const compactMoney = (n: number): string => {
@@ -15,7 +16,7 @@ const compactMoney = (n: number): string => {
   return formatCurrency(n);
 };
 
-export const FinancialDashboard = ({ gameState, dailyProfit }: Props) => {
+export const FinancialDashboard = ({ gameState, dailyProfit, simple }: Props) => {
   const worth = netWorth(gameState);
   const next = nextMilestone(gameState);
   const claimed = gameState.milestonesClaimed ?? 0;
@@ -29,6 +30,7 @@ export const FinancialDashboard = ({ gameState, dailyProfit }: Props) => {
   ];
   return (
     <div className="space-y-4">
+      {!simple && (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((st) => (
           <Card key={st.label} className="bubbly-card p-4 sm:p-5 h-[5.75rem] sm:h-24 overflow-hidden">
@@ -44,6 +46,7 @@ export const FinancialDashboard = ({ gameState, dailyProfit }: Props) => {
           </Card>
         ))}
       </div>
+      )}
       <Card className="bubbly-card p-5 bg-gradient-to-r from-fuchsia-500 via-pink-500 to-amber-400 text-white border-none">
         <div className="flex items-center gap-3">
           <Crown className="h-8 w-8 animate-floaty shrink-0" />
@@ -53,10 +56,13 @@ export const FinancialDashboard = ({ gameState, dailyProfit }: Props) => {
             <p className="text-lg sm:text-2xl font-black tabular-nums tracking-tight whitespace-nowrap overflow-hidden">Net worth {formatCurrency(worth)} <span className="text-white/70 text-sm sm:text-base font-bold">of {compactMoney(next.threshold)}</span></p>
           </div>
         </div>
+        {!simple && (
         <p className="text-[13px] sm:text-sm font-bold bg-white/25 rounded-full px-3 py-1 mt-3 whitespace-nowrap overflow-hidden text-ellipsis">
           Reward at {compactMoney(next.threshold)}: {compactMoney(next.cashReward)} + {next.satsReward.toLocaleString()} sats · Forecast profit today: {formatCurrency(dailyProfit)}
         </p>
+        )}
         <Progress value={pct} className="mt-3 h-4 bg-white/30 [&>div]:bg-white" />
+        {!simple && (
         <div className="flex flex-nowrap gap-1.5 mt-3 overflow-x-auto h-7 items-center pr-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,black_88%,transparent_100%)]">
           {ladder.map((m, i) => (
             <span key={m.threshold} className={`text-[11px] font-black rounded-full px-2.5 py-1 shrink-0 whitespace-nowrap ${i < claimed ? "bg-white text-pink-600" : i === claimed ? "bg-black/25 text-white ring-2 ring-white" : "bg-white/20 text-white/70"}`}>
@@ -65,6 +71,7 @@ export const FinancialDashboard = ({ gameState, dailyProfit }: Props) => {
           ))}
           <span className="text-[11px] font-black rounded-full px-2.5 py-1 shrink-0 whitespace-nowrap bg-white/20 text-white/70">… x10 forever</span>
         </div>
+        )}
       </Card>
     </div>
   );

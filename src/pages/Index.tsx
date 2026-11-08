@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { GameState } from "@/types/game";
 import {
   freshState, processDayEnd, purchaseStock, buyMachine, unlockLocation, buyUpgrade,
-  zapPromo, takeRescueLoan, sellSats, receiveSats, forecastCosts, totalStock, refillLines, refillJars, buyMarketing, toggleOngoingMarketing, takeLoan, repayLoan,
+  zapPromo, takeRescueLoan, sellSats, receiveSats, forecastCosts, totalStock, refillLines, refillJars, buyMarketing, toggleOngoingMarketing, takeLoan, repayLoan, advanceCrate,
   buyBtc, sweepLightningToChain, consolidateUtxos, buyMiningRig, toggleMining,
   stockCapacity, totalMachines, hasUpgrade, SAVE_KEY, ActionResult, LN_CUSTOMER_SHARE,
 } from "@/lib/gameLogic";
@@ -22,6 +22,18 @@ import { Play, FastForward, RotateCcw, HelpCircle, X, Volume2, VolumeX, Home, Ma
 import { chiptune, MUSIC_PREF_KEY } from "@/lib/music";
 import { sfxCoin, sfxError, sfxFanfare, setSfxEnabled, SFX_PREF_KEY } from "@/lib/sfx";
 import { toast } from "sonner";
+import crateStage1 from "@/assets/crate-stage-1.jpg";
+import crateStage2 from "@/assets/crate-stage-2.jpg";
+import crateStage3 from "@/assets/crate-stage-3.jpg";
+import crateStage4 from "@/assets/vending-machine-remake.jpg";
+
+const CRATE_STEPS = [
+  { img: crateStage1, title: "A crate just landed at the Corner Shop.", btn: "Open the crate" },
+  { img: crateStage2, title: "Something red is hiding under a cover.", btn: "Pull the cover off" },
+  { img: crateStage3, title: "Panels everywhere. Worth it.", btn: "Clear the wreckage" },
+  { img: crateStage4, title: "Your first machine. Old school, and all yours.", btn: "Start selling" },
+];
+const CRATE_STEP_NAMES = ["Sealed", "Open", "Uncovered", "Ready"];
 
 const loadSave = (): GameState => {
   try {
@@ -52,6 +64,12 @@ const loadSave = (): GameState => {
         // Old saves ran exactly one mining rig: migrate to the fleet count.
         if (typeof parsed.miningMachines !== "number" && parsed.miningOwned) {
           merged.miningMachines = 1;
+        }
+        // Saves from before the crate opening: anyone already playing has
+        // long since unpacked their first machine.
+        if (typeof parsed.firstMachineUnpacked !== "boolean") {
+          merged.firstMachineUnpacked = merged.locations.some((l) => (l.machines ?? 0) > 0) || (parsed.day ?? 1) > 1;
+          merged.crateStep = merged.firstMachineUnpacked ? 3 : 0;
         }
         return merged;
       }
@@ -148,6 +166,10 @@ const Index = () => {
   };
 
   const handleNextDay = () => {
+    if (!gameState.firstMachineUnpacked) {
+      toast.info("First job: open the crate at the Corner Shop.");
+      return;
+    }
     const before = gameState;
     const after = processDayEnd(before);
     setGameState(after);
@@ -174,6 +196,11 @@ const Index = () => {
   const breakdownCosts = gameState.lastDay
     ? { revenue: gameState.lastDay.revenue, productCost: gameState.lastDay.productCost, rent: gameState.lastDay.rent, marketing: gameState.lastDay.marketing, depreciation: gameState.lastDay.depreciation, cardFees: gameState.lastDay.cardFees, miningFees: gameState.lastDay.miningFees ?? 0, tax: gameState.lastDay.tax, netProfit: gameState.lastDay.netProfit }
     : costs;
+
+  // Beginners see less: the full numbers unlock once the loop is learned.
+  const beginner = gameState.day <= 7 && gameState.totalRevenue < 500;
+  const crated = !gameState.firstMachineUnpacked;
+  const crateStep = Math.min(3, Math.max(0, gameState.crateStep ?? 0));
 
   return (
     <div className="min-h-screen relative overflow-x-clip game-scene">
@@ -252,7 +279,7 @@ const Index = () => {
           <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-pink-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
             Gum Mogul
           </h1>
-          <p className="text-base sm:text-lg font-bold text-muted-foreground">Build a bubblegum empire, one machine, one zap at a time. Climb the milestone ladder: $2.5k, $25k, $250k, $2.5M, each rung pays a reward 👑</p>
+          <p className="text-base sm:text-lg font-bold text-muted-foreground">Build a bubblegum empire, one machine at a time.</p>
           <button onClick={() => setShowHelp(!showHelp)} className="inline-flex items-center gap-1 font-black text-primary underline underline-offset-4">
             {showHelp ? <X className="h-4 w-4" /> : <HelpCircle className="h-4 w-4" />} How to play
           </button>
@@ -261,13 +288,9 @@ const Index = () => {
           </button>
           {showHelp && (
             <div className="max-w-2xl mx-auto text-left bg-white/85 backdrop-blur rounded-3xl border-[3px] p-5 text-sm font-semibold space-y-2 animate-pop">
-              <p>1. <strong>Stock the jars.</strong> Buy gum before customers arrive, or tap <strong>🧃 Refill jars</strong> right under the Next Day button to fill every jar in one go (bulk discounts included). Empty slots lose sales and reputation. On mobile the Next Day and Refill buttons stick to the bottom of the screen.</p>
-              <p>2. <strong>Set prices.</strong> The slider bends demand: deals sell fast, greedy prices sell slow and dent your reputation.</p>
-              <p>3. <strong>Hit Next Day.</strong> Sales land, rent, marketing, card fees and tax leave. Watch the diary for events.</p>
-              <p>4. <strong>Grow.</strong> Unlock flavours at revenue milestones, open new locations, add machines, buy upgrades.</p>
-              <p>5. <strong>Go Lightning ⚡.</strong> The $150 terminal lets customers pay in sats: instant, fee free. Pay suppliers in sats for 8% off, run zap promos, and if cash runs dry, a Lightning rescue loan can save the run.</p>
-              <p>6. <strong>Do not go broke.</strong> Three days in a row with negative cash ends the game. Your progress auto-saves in this browser.</p>
-              <p>🎵 <strong>Soundtrack:</strong> the speaker button (bottom right) plays the Gum Mogul Overture, an original 3-minute orchestral piece rendered from code in your browser. Strings, piano, flute, the works. No audio files.</p>
+              <p>1. <strong>Stock up.</strong> Buy gum on the Gums tab so the machine is never empty.</p>
+              <p>2. <strong>Set your price.</strong> Cheaper sells more. Pricier earns more per gum, until people walk away.</p>
+              <p>3. <strong>Hit Next Day.</strong> That is the whole loop. Everything else unlocks as you grow.</p>
             </div>
           )}
         </header>
@@ -278,6 +301,26 @@ const Index = () => {
           </div>
         )}
 
+        {crated ? (
+        <div className="max-w-2xl mx-auto w-full">
+          <div className="bubbly-card overflow-hidden bg-white">
+            <div className="flex gap-1.5 p-3 pb-0">
+              {CRATE_STEP_NAMES.map((name, i) => (
+                <span key={name} className={`flex-1 text-center text-[11px] font-black rounded-full py-1.5 ${i < crateStep ? "bg-emerald-500 text-white" : i === crateStep ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400"}`}>{i + 1}. {name}</span>
+              ))}
+            </div>
+            <img key={crateStep} src={CRATE_STEPS[crateStep].img} alt="Your first gum machine, being unpacked from its wooden crate" className="w-full h-[380px] sm:h-[440px] object-cover mt-3 animate-pop" draggable={false} />
+            <div className="p-5 space-y-3 text-center">
+              <p className="text-xl font-black">{CRATE_STEPS[crateStep].title}</p>
+              <Button onClick={() => apply(advanceCrate(gameState))} className="w-full h-14 text-lg rounded-full font-black">
+                {CRATE_STEPS[crateStep].btn}
+              </Button>
+              <p className="text-sm font-bold text-muted-foreground">Every empire starts with one machine.</p>
+            </div>
+          </div>
+        </div>
+        ) : (
+        <>
         {/* News bar: HARD fixed height at every breakpoint, content is
             line-clamped inside it. The bar can never grow or shrink, so
             the page below never shifts when the headline changes. */}
@@ -289,7 +332,7 @@ const Index = () => {
           )}
         </div>
 
-        <FinancialDashboard gameState={gameState} dailyProfit={costs.netProfit} />
+        <FinancialDashboard gameState={gameState} dailyProfit={costs.netProfit} simple={beginner} />
 
         <div className="max-w-2xl mx-auto w-full">
           <div className="flex flex-col gap-4">
@@ -307,9 +350,13 @@ const Index = () => {
                 🧃 Refill jars{refillUnits > 0 ? `: ${refillUnits} gums for $${refillCost.toFixed(2)}` : " (already at forecast)"}
               </Button>
             </div>
+            {!beginner && (
             <CostBreakdownPanel costs={breakdownCosts} title={gameState.lastDay ? "Yesterday in numbers" : "Today, forecast"} lnShare={gameState.lastDay ? gameState.lastDay.lnShare : hasUpgrade(gameState, "ln-terminal") ? LN_CUSTOMER_SHARE : 0} />
+            )}
           </div>
         </div>
+        </>
+        )}
         </div>
 
         <div id="gums" className={activeTab === "gums" ? "" : "hidden"}>
@@ -361,7 +408,7 @@ const Index = () => {
           />
         </div>
 
-        <div className={activeTab === "play" ? "" : "hidden"}>
+        <div className={activeTab === "play" && !beginner && !crated ? "" : "hidden"}>
           <InsightsPanel gameState={gameState} />
         </div>
 

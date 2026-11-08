@@ -236,7 +236,7 @@ export const CITIES = ["Bubbleville", "Neon Bay"] as const;
 
 export const INITIAL_LOCATIONS: Location[] = [
   // City 1: Bubbleville, where every mogul starts.
-  { id: "corner", name: "Corner Shop", emoji: "🏪", city: "Bubbleville", blurb: "Your first spot. Steady locals, kind rent.", traffic: 1.0, rentPerMachine: 5, unlockCost: 0, unlocked: true, machines: 1 },
+  { id: "corner", name: "Corner Shop", emoji: "🏪", city: "Bubbleville", blurb: "Your first spot. Steady locals, kind rent.", traffic: 1.0, rentPerMachine: 5, unlockCost: 0, unlocked: true, machines: 0 },
   { id: "school", name: "School Gates", emoji: "🎒", city: "Bubbleville", blurb: "Recess rushes. Berry Blast flies off the shelf.", traffic: 1.4, rentPerMachine: 8, unlockCost: 200, unlocked: false, machines: 0 },
   { id: "bus", name: "Bus Station", emoji: "🚏", city: "Bubbleville", blurb: "Commuters with exact change and zero patience.", traffic: 1.7, rentPerMachine: 11, unlockCost: 400, unlocked: false, machines: 0 },
   { id: "arcade", name: "Arcade Alley", emoji: "🕹️", city: "Bubbleville", blurb: "Token rich, gum hungry, open late.", traffic: 2.0, rentPerMachine: 14, unlockCost: 600, unlocked: false, machines: 0 },
@@ -340,7 +340,7 @@ export const freshState = (): GameState => ({
   history: [],
   log: [
     { id: nextId(), day: 1, icon: "⚡", text: "A fan zapped 1,000 sats to your tip jar. Lightning is fast, huh?", kind: "ln" },
-    { id: nextId(), day: 1, icon: "🍬", text: "Welcome, future Gum Mogul. Stock the machine, set your prices, hit Next Day.", kind: "info" },
+    { id: nextId(), day: 1, icon: "🍬", text: "Welcome, future Gum Mogul. First job: open the crate at the Corner Shop.", kind: "info" },
   ],
   lnTx: [{ id: nextId(), day: 1, label: "Tip jar zap from a fan", sats: 1000 }],
   achievements: [],
@@ -350,6 +350,8 @@ export const freshState = (): GameState => ({
   negativeDays: 0,
   gameOver: false,
   mogulReached: false,
+  firstMachineUnpacked: false,
+  crateStep: 0,
   pendingEvent: null,
   lastDay: null,
 });
@@ -509,6 +511,27 @@ export const unlockLocation = (state: GameState, locationId: string): ActionResu
   target.machines = 1;
   pushLog(s, loc.emoji, `${loc.name} is OPEN, first machine installed. ${loc.blurb}`, "unlock");
   return { state: unlockAchievements(s), ok: true, message: `${loc.name} opened` };
+};
+
+// The crate opening: four taps take the first machine from sealed crate to
+// ready. Each step only advances the crate; the last one installs the machine.
+export const advanceCrate = (state: GameState): ActionResult => {
+  if (state.firstMachineUnpacked) return { state, ok: false, message: "Already unpacked" };
+  const step = state.crateStep ?? 0;
+  if (step < 3) {
+    const messages = [
+      "Lid is off. Something red is hiding under a cover.",
+      "Cover is off and the panels are everywhere. It is the real thing.",
+      "Wreckage cleared. Look at her.",
+    ];
+    return { state: { ...state, crateStep: step + 1 }, ok: true, message: messages[step] };
+  }
+  const s = { ...state, locations: state.locations.map((l) => ({ ...l })), log: [...state.log] };
+  const corner = s.locations.find((l) => l.id === "corner");
+  if (corner && corner.machines < 1) corner.machines = 1;
+  s.firstMachineUnpacked = true;
+  pushLog(s, "🍬", "First machine unpacked and standing at the Corner Shop. Stock it with gum, then hit Next Day.", "unlock");
+  return { state: unlockAchievements(s), ok: true, message: "Your first machine is live. Stock it and hit Next Day." };
 };
 
 export const buyUpgrade = (state: GameState, upgradeId: string): ActionResult => {
