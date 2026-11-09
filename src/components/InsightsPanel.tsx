@@ -35,7 +35,7 @@ export const InsightsPanel = ({ gameState }: { gameState: GameState }) => {
           {ACHIEVEMENTS.map((a) => {
             const got = gameState.achievements.includes(a.id);
             return (
-              <div key={a.id} className={`rounded-2xl p-3 border-2 ${got ? "bg-amber-50 border-amber-300 animate-pop" : "bg-muted/50 border-dashed opacity-60"}`}>
+              <div key={a.id} className={`rounded-2xl p-3 border-2 ${got ? "bg-amber-400/15 border-amber-300/40 animate-pop" : "bg-muted/50 border-dashed opacity-60"}`}>
                 <p className="text-2xl">{got ? a.emoji : "🔒"}</p>
                 <p className="font-black text-sm leading-tight">{a.name}</p>
                 <p className="text-[13px] font-semibold text-muted-foreground leading-relaxed">{a.desc}</p>
@@ -49,7 +49,7 @@ export const InsightsPanel = ({ gameState }: { gameState: GameState }) => {
         <h2 className="text-xl font-black flex items-center gap-2 mb-3"><ScrollText className="h-5 w-5 text-secondary" /> Empire diary</h2>
         <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
           {gameState.log.map((entry) => (
-            <div key={entry.id} className={`rounded-2xl px-3 py-2 text-sm font-semibold flex gap-2 ${entry.kind === "warn" ? "bg-rose-50 text-rose-900" : entry.kind === "ln" ? "bg-amber-50 text-amber-900" : entry.kind === "unlock" ? "bg-emerald-50 text-emerald-900" : entry.kind === "event" ? "bg-violet-50 text-violet-900" : "bg-muted/60"}`}>
+            <div key={entry.id} className={`rounded-2xl px-3 py-2 text-sm font-semibold flex gap-2 ${entry.kind === "warn" ? "bg-rose-400/15 text-rose-200" : entry.kind === "ln" ? "bg-amber-400/15 text-amber-200" : entry.kind === "unlock" ? "bg-emerald-400/15 text-emerald-200" : entry.kind === "event" ? "bg-violet-400/15 text-violet-200" : "bg-muted/60"}`}>
               <span>{entry.icon}</span>
               <span><span className="font-black text-xs uppercase opacity-60">Day {entry.day} · </span>{entry.text}</span>
             </div>

@@ -78,7 +78,7 @@ export const RewardsPanel = ({ gameState }: { gameState: GameState }) => {
               const done = i < claimed;
               const isNext = i === claimed;
               return (
-                <div key={m.threshold} className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2 ${done ? "bg-amber-50 border-amber-300" : isNext ? "bg-white border-primary shadow" : "bg-muted/50 border-dashed opacity-70"}`}>
+                <div key={m.threshold} className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2 ${done ? "bg-amber-400/15 border-amber-300/40" : isNext ? "bg-white/10 border-primary shadow" : "bg-muted/50 border-dashed opacity-70"}`}>
                   <span className="text-2xl">{done ? "✅" : m.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-sm leading-tight">{m.title} <span className="text-muted-foreground font-bold">· {money(m.threshold)}</span></p>
@@ -101,7 +101,7 @@ export const RewardsPanel = ({ gameState }: { gameState: GameState }) => {
           <p className="text-xs font-bold text-muted-foreground">New flavours unlock at lifetime-revenue marks, and each one sells dearer than the last.</p>
           <div className="mt-4 space-y-2">
             {gameState.products.map((p) => (
-              <div key={p.id} className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2 ${p.unlocked ? "bg-white border-emerald-200" : "bg-muted/50 border-dashed opacity-80"}`}>
+              <div key={p.id} className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2 ${p.unlocked ? "bg-white/10 border-emerald-300/30" : "bg-muted/50 border-dashed opacity-80"}`}>
                 <span className={`h-10 w-10 rounded-full bg-gradient-to-br ${p.color} flex items-center justify-center text-xl shadow ${p.unlocked ? "" : "grayscale"}`}>{p.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-black text-sm leading-tight">{p.name}</p>
@@ -128,7 +128,7 @@ export const RewardsPanel = ({ gameState }: { gameState: GameState }) => {
             {gameState.locations.map((l) => {
               const gateBlocked = !!l.requiresLocation && !gameState.locations.find((x) => x.id === l.requiresLocation)?.unlocked;
               return (
-                <div key={l.id} className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2 ${l.unlocked ? "bg-white border-emerald-200" : "bg-muted/50 border-dashed opacity-80"}`}>
+                <div key={l.id} className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2 ${l.unlocked ? "bg-white/10 border-emerald-300/30" : "bg-muted/50 border-dashed opacity-80"}`}>
                   <span className="text-2xl">{l.unlocked ? l.emoji : "🔒"}</span>
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-sm leading-tight">{l.name} <span className="text-muted-foreground font-bold">· {l.city}</span></p>
@@ -155,7 +155,7 @@ export const RewardsPanel = ({ gameState }: { gameState: GameState }) => {
             {ACHIEVEMENTS.map((a) => {
               const has = earned.has(a.id);
               return (
-                <div key={a.id} className={`rounded-2xl border-2 px-3 py-2 ${has ? "bg-amber-50 border-amber-300" : "bg-muted/50 border-dashed opacity-70"}`}>
+                <div key={a.id} className={`rounded-2xl border-2 px-3 py-2 ${has ? "bg-amber-400/15 border-amber-300/40" : "bg-muted/50 border-dashed opacity-70"}`}>
                   <p className="font-black text-sm leading-tight">{has ? a.emoji : "🔒"} {a.name}</p>
                   <p className="text-[11px] font-bold text-muted-foreground leading-snug">{a.desc}</p>
                 </div>

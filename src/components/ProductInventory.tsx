@@ -51,7 +51,7 @@ export const ProductInventory = ({ gameState, onPurchase, onPriceChange }: Props
     return (
       <div className="flex rounded-full overflow-hidden border-2 shrink-0">
         {[10, 25, 50, 100].map((n) => (
-          <button key={n} onClick={() => setQty({ ...qty, [p.id]: n })} className={`${small ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"} font-black ${q === n ? "bg-secondary text-white" : "bg-white text-muted-foreground"}`}>{n}</button>
+          <button key={n} onClick={() => setQty({ ...qty, [p.id]: n })} className={`${small ? "px-2 py-1 text-xs" : "px-3 py-1.5 text-sm"} font-black ${q === n ? "bg-secondary text-white" : "bg-white/10 text-muted-foreground"}`}>{n}</button>
         ))}
       </div>
     );
@@ -59,12 +59,12 @@ export const ProductInventory = ({ gameState, onPurchase, onPriceChange }: Props
 
   const priceStepper = (p: Product, big?: boolean) => (
     <div className="flex items-center gap-2">
-      <button onClick={() => bumpPrice(p, -1)} aria-label={`Lower the price of ${p.name}`} className={`${big ? "h-11 w-11" : "h-8 w-8"} rounded-full bg-white border-2 font-black flex items-center justify-center active:scale-95 transition-transform`}><Minus className={big ? "h-5 w-5" : "h-4 w-4"} /></button>
+      <button onClick={() => bumpPrice(p, -1)} aria-label={`Lower the price of ${p.name}`} className={`${big ? "h-11 w-11" : "h-8 w-8"} rounded-full bg-white/10 border-2 border-white/20 text-foreground font-black flex items-center justify-center active:scale-95 transition-transform`}><Minus className={big ? "h-5 w-5" : "h-4 w-4"} /></button>
       <div className="text-center min-w-[5.5rem]">
         <p className={`${big ? "text-3xl" : "text-lg"} font-black leading-none`}>{formatCurrency(p.sellPrice)}</p>
         <p className={`text-[11px] font-black uppercase ${mood(p).cls}`}>{mood(p).word}</p>
       </div>
-      <button onClick={() => bumpPrice(p, 1)} aria-label={`Raise the price of ${p.name}`} className={`${big ? "h-11 w-11" : "h-8 w-8"} rounded-full bg-white border-2 font-black flex items-center justify-center active:scale-95 transition-transform`}><Plus className={big ? "h-5 w-5" : "h-4 w-4"} /></button>
+      <button onClick={() => bumpPrice(p, 1)} aria-label={`Raise the price of ${p.name}`} className={`${big ? "h-11 w-11" : "h-8 w-8"} rounded-full bg-white/10 border-2 border-white/20 text-foreground font-black flex items-center justify-center active:scale-95 transition-transform`}><Plus className={big ? "h-5 w-5" : "h-4 w-4"} /></button>
     </div>
   );
 
@@ -73,7 +73,7 @@ export const ProductInventory = ({ gameState, onPurchase, onPriceChange }: Props
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h2 className="text-3xl font-black">🍬 The Gum Lineup</h2>
         <div className="flex items-center gap-2">
-          <div className="flex rounded-full bg-white border-[3px] overflow-hidden shadow" role="tablist" aria-label="Gums view">
+          <div className="flex rounded-full bg-white/10 border-[3px] border-white/15 overflow-hidden shadow" role="tablist" aria-label="Gums view">
             <button onClick={() => setView("gallery")} aria-pressed={view === "gallery"} className={`px-3.5 py-2 font-black flex items-center gap-1 text-sm ${view === "gallery" ? "bg-slate-900 text-white" : "text-muted-foreground"}`}>
               <LayoutGrid className="h-4 w-4" /> Gallery
             </button>
@@ -81,7 +81,7 @@ export const ProductInventory = ({ gameState, onPurchase, onPriceChange }: Props
               <List className="h-4 w-4" /> List
             </button>
           </div>
-          <div className="flex rounded-full bg-white border-[3px] overflow-hidden shadow">
+          <div className="flex rounded-full bg-white/10 border-[3px] border-white/15 overflow-hidden shadow">
             <button onClick={() => setMethod("cash")} className={`px-4 py-2 font-black flex items-center gap-1 ${method === "cash" ? "bg-primary text-white" : "text-muted-foreground"}`}>
               <DollarSign className="h-4 w-4" /> Cash
             </button>
@@ -153,7 +153,7 @@ export const ProductInventory = ({ gameState, onPurchase, onPriceChange }: Props
             const low = p.stock < forecast;
             const need = Math.max(10, Math.ceil((forecast - p.stock) / 10) * 10);
             return (
-              <div key={p.id} className="rounded-3xl border-2 bg-white/85 backdrop-blur px-3 py-2.5 space-y-2">
+              <div key={p.id} className="rounded-3xl border-2 border-white/10 bg-white/10 backdrop-blur px-3 py-2.5 space-y-2">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-2xl overflow-hidden shrink-0"><img src={GUM_IMAGES[p.id]} alt={p.name} className="w-full h-full object-cover" draggable={false} /></div>
                   <div className="min-w-0">

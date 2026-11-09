@@ -28,7 +28,7 @@ export const BitcoinWalletPanel = ({ gameState, onBuyBtc, onSweep, onConsolidate
   const sorted = [...utxos].sort((a, b) => b.sats - a.sats);
 
   return (
-    <Card className="bubbly-card p-5 mt-6 bg-gradient-to-br from-amber-50 to-orange-50">
+    <Card className="bubbly-card p-5 mt-6 bg-gradient-to-br from-amber-400/15 to-orange-400/10">
       <h3 className="font-black text-lg flex items-center gap-2">
         <Bitcoin className="h-5 w-5 text-amber-600" /> Bitcoin Vault: self-custody, on-chain
       </h3>
@@ -68,8 +68,8 @@ export const BitcoinWalletPanel = ({ gameState, onBuyBtc, onSweep, onConsolidate
           {BTC_ROUTES.map((r) => {
             const received = Math.floor(usd * SATS_PER_USD * (1 - r.feePct));
             return (
-              <div key={r.id} className="bg-white/80 rounded-2xl border p-3">
-                <p className="font-black text-sm">{r.emoji} {r.name} {r.kyc && <span className="text-[10px] bg-rose-100 text-rose-700 rounded-full px-2 py-0.5 align-middle">KYC</span>}</p>
+              <div key={r.id} className="bg-white/10 rounded-2xl border border-white/10 p-3">
+                <p className="font-black text-sm">{r.emoji} {r.name} {r.kyc && <span className="text-[10px] bg-rose-400/20 text-rose-300 rounded-full px-2 py-0.5 align-middle">KYC</span>}</p>
                 <p className="text-[13px] font-semibold text-muted-foreground leading-relaxed mt-0.5">{r.blurb}</p>
                 <p className="text-[11px] font-black text-amber-700 mt-1">Fee {(r.feePct * 100).toFixed(1)}% · you receive about {received.toLocaleString()} sats</p>
                 <p className="text-[13px] font-semibold text-muted-foreground leading-relaxed mt-1">{r.riskNote}</p>
@@ -82,7 +82,7 @@ export const BitcoinWalletPanel = ({ gameState, onBuyBtc, onSweep, onConsolidate
         </div>
       </div>
 
-      <div className="mt-4 bg-white/80 rounded-2xl border p-3">
+      <div className="mt-4 bg-white/10 rounded-2xl border border-white/10 p-3">
         <p className="text-sm font-black">🔄 Sweep Lightning sats on-chain</p>
         <p className="text-[13px] font-semibold text-muted-foreground leading-relaxed mt-0.5">Lightning is for spending; on-chain is for saving. Sweeping costs a 1% swap fee plus the chain fee, and lands as one clean UTXO. Minimum 10,000 sats: tiny UTXOs cost more to spend later than they are worth.</p>
         <div className="flex gap-2 mt-2 flex-wrap">
@@ -103,8 +103,8 @@ export const BitcoinWalletPanel = ({ gameState, onBuyBtc, onSweep, onConsolidate
         ) : (
           <div className="max-h-44 overflow-y-auto space-y-1 mt-2 pr-1">
             {sorted.map((u) => (
-              <div key={u.id} className="flex items-center justify-between gap-2 bg-white/70 rounded-xl border px-3 py-1.5 text-xs font-bold">
-                <span>{u.source} <span className="text-muted-foreground">· day {u.day}</span> {u.kyc && <span className="text-[10px] bg-rose-100 text-rose-700 rounded-full px-2 py-0.5">KYC-linked</span>}</span>
+              <div key={u.id} className="flex items-center justify-between gap-2 bg-white/10 rounded-xl border border-white/10 px-3 py-1.5 text-xs font-bold">
+                <span>{u.source} <span className="text-muted-foreground">· day {u.day}</span> {u.kyc && <span className="text-[10px] bg-rose-400/20 text-rose-300 rounded-full px-2 py-0.5">KYC-linked</span>}</span>
                 <span className="tabular-nums">{u.sats.toLocaleString()} sats</span>
               </div>
             ))}
@@ -116,7 +116,7 @@ export const BitcoinWalletPanel = ({ gameState, onBuyBtc, onSweep, onConsolidate
         </Button>
       </div>
 
-      <div className="mt-4 bg-white/80 rounded-2xl border p-3">
+      <div className="mt-4 bg-white/10 rounded-2xl border border-white/10 p-3">
         <p className="text-sm font-black flex items-center gap-1.5"><Pickaxe className="h-4 w-4 text-amber-600" /> Mining as a service</p>
         <p className="text-[13px] font-semibold text-muted-foreground leading-relaxed mt-0.5">
           No KYC route that PRINTS bitcoin: a hosting company runs your machines. First machine {formatCurrency(MINING_EQUIPMENT_COST)}, then {formatCurrency(MINING_MONTHLY_FEE)}/month per machine in power and hosting, billed daily and shown in your P&L. Add as many machines as you like: every new one costs 15% more rack space, and fees and expected payouts scale with the fleet. Machines are payable in cash or in sats: paying over Lightning takes 8% off the price. Payouts land weekly in your wallet and swing hard with difficulty and uptime. Needs {formatCurrency(MINING_REQUIRES_REVENUE)} lifetime revenue to start.

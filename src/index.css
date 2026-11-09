@@ -5,40 +5,43 @@
 /* Gum Mogul design system: bubblegum pink, mint, lemon, sky. All HSL. */
 @layer base {
   :root {
-    --background: 330 100% 97%;
-    --foreground: 320 30% 14%;
-    --card: 0 0% 100%;
-    --card-foreground: 320 30% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 320 30% 14%;
-    --primary: 330 85% 55%;
-    --primary-light: 330 85% 68%;
-    --primary-edge: 335 74% 35%;
+    /* New UI (2026-11-09): the whole game lives in the Map's dark cinematic
+       world. Pink mode is a deep plum night; accents keep the candy hues,
+       lifted for dark backgrounds. Every surface reads these tokens. */
+    --background: 325 32% 8%;
+    --foreground: 330 40% 96%;
+    --card: 322 26% 13%;
+    --card-foreground: 330 40% 96%;
+    --popover: 322 26% 13%;
+    --popover-foreground: 330 40% 96%;
+    --primary: 330 85% 58%;
+    --primary-light: 330 88% 70%;
+    --primary-edge: 335 70% 32%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 262 80% 62%;
-    --secondary-light: 262 85% 76%;
-    --secondary-edge: 262 72% 42%;
+    --secondary: 262 80% 66%;
+    --secondary-light: 262 85% 78%;
+    --secondary-edge: 262 70% 40%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 330 60% 93%;
-    --muted-foreground: 320 18% 37%;
-    --accent: 160 75% 38%;
+    --muted: 322 22% 18%;
+    --muted-foreground: 325 18% 72%;
+    --accent: 160 70% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 330 50% 88%;
-    --input: 330 50% 88%;
-    --ring: 330 85% 55%;
+    --border: 322 20% 24%;
+    --input: 322 20% 24%;
+    --ring: 330 85% 58%;
     --radius: 1.25rem;
-    --success: 160 75% 38%;
+    --success: 160 70% 45%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 38 92% 55%;
     --warning-foreground: 0 0% 100%;
-    --info: 217 91% 60%;
+    --info: 217 91% 65%;
     --info-foreground: 0 0% 100%;
-    --profit: 160 75% 36%;
-    --loss: 0 84% 58%;
-    --neutral: 217 91% 60%;
-    --machine-red: 350 85% 55%;
+    --profit: 160 70% 50%;
+    --loss: 0 84% 65%;
+    --neutral: 217 91% 65%;
+    --machine-red: 350 85% 60%;
     --machine-chrome: 0 0% 85%;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -53,39 +56,41 @@
      names as the pink default, so every surface re-skins from one switch.
      Pink stays the gum accent inside the art; sats stay amber in both. */
   [data-theme="blue"] {
-    --background: 210 70% 96%;
-    --foreground: 215 35% 14%;
-    --card: 0 0% 100%;
-    --card-foreground: 215 35% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 35% 14%;
-    --primary: 215 85% 45%;
-    --primary-light: 215 90% 64%;
-    --primary-edge: 215 72% 27%;
+    /* Blue mode: the same dark world in steel and teal (the modern city
+       at night). Same token names, so one switch re-skins everything. */
+    --background: 214 38% 8%;
+    --foreground: 210 40% 96%;
+    --card: 213 30% 13%;
+    --card-foreground: 210 40% 96%;
+    --popover: 213 30% 13%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 215 88% 58%;
+    --primary-light: 215 92% 70%;
+    --primary-edge: 215 72% 30%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 190 65% 32%;
-    --secondary-light: 190 60% 46%;
-    --secondary-edge: 190 72% 20%;
+    --secondary: 190 65% 42%;
+    --secondary-light: 190 60% 55%;
+    --secondary-edge: 190 72% 22%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 45% 91%;
-    --muted-foreground: 215 20% 38%;
-    --accent: 172 60% 34%;
+    --muted: 213 24% 18%;
+    --muted-foreground: 212 18% 72%;
+    --accent: 172 60% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 35% 85%;
-    --input: 210 35% 85%;
-    --ring: 215 85% 45%;
-    --success: 172 60% 34%;
+    --border: 213 22% 24%;
+    --input: 213 22% 24%;
+    --ring: 215 88% 58%;
+    --success: 172 60% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 85% 45%;
+    --warning: 38 85% 50%;
     --warning-foreground: 0 0% 100%;
-    --info: 200 85% 45%;
+    --info: 200 85% 55%;
     --info-foreground: 0 0% 100%;
-    --profit: 172 60% 32%;
-    --loss: 0 84% 58%;
-    --neutral: 215 60% 45%;
-    --machine-red: 210 70% 50%;
+    --profit: 172 60% 48%;
+    --loss: 0 84% 65%;
+    --neutral: 215 60% 55%;
+    --machine-red: 210 70% 55%;
     --machine-chrome: 0 0% 85%;
   }
   .dark {
@@ -212,36 +217,31 @@
   animation: bubble-rise linear infinite;
 }
 .bubbly-card {
-  @apply rounded-[1.75rem] border-[3px];
-  /* Chunky game frame: bright top edge (light hitting the frame), a hard
-     offset ledge underneath, and a soft coloured drop. Flat web cards have
-     none of these three layers. */
+  @apply rounded-[1.75rem] border;
+  /* New UI: one card for the whole game, the dark glass panel from the Map
+     and Location screens. background-color only (never the shorthand), so
+     gradient banners that also carry this class keep their image layer.
+     This rule is unlayered, so it deliberately overrides light bg utilities
+     on card surfaces while their inner text stays token-driven. */
+  background-color: hsl(var(--card) / 0.72);
+  border-color: hsl(0 0% 100% / 0.10);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -4px 0 hsl(var(--primary-edge) / 0.07),
-    0 6px 0 hsl(var(--primary) / 0.13),
-    0 24px 38px -18px hsl(var(--primary) / 0.38);
+    inset 0 1px 0 hsl(0 0% 100% / 0.10),
+    0 6px 0 hsl(var(--primary) / 0.10),
+    0 24px 38px -18px rgba(0, 0, 0, 0.65);
 }
-/* The stage behind the UI: candy-dot pattern on a pink-to-sky wash with
-   darkened edges (vignette), so bright panels sit ON something. */
+/* The stage behind the UI: the same night world as the Map. A primary glow
+   at the top, a faint dot grid, a deep vignette, over the theme's base.
+   Tokens flip with Pink/Blue, so one rule serves both modes. */
 .game-scene {
   background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 60%),
-    radial-gradient(rgba(219, 39, 119, 0.08) 2px, transparent 2.6px),
-    radial-gradient(rgba(14, 165, 233, 0.10) 2px, transparent 2.6px),
-    radial-gradient(ellipse 120% 90% at 50% 45%, rgba(0, 0, 0, 0) 62%, rgba(88, 10, 50, 0.16) 100%),
-    linear-gradient(180deg, #fbcfe8 0%, #fdf2f8 34%, #e0f2fe 100%);
-  background-size: auto, 26px 26px, 26px 26px, auto, auto;
-  background-position: 0 0, 0 0, 13px 13px, 0 0, 0 0;
-}
-/* Blue mode scene: steel dots on an ice-to-sky wash, slate vignette. */
-[data-theme="blue"] .game-scene {
-  background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 60%),
-    radial-gradient(rgba(30, 90, 160, 0.09) 2px, transparent 2.6px),
-    radial-gradient(rgba(13, 148, 136, 0.10) 2px, transparent 2.6px),
-    radial-gradient(ellipse 120% 90% at 50% 45%, rgba(0, 0, 0, 0) 62%, rgba(10, 30, 60, 0.16) 100%),
-    linear-gradient(180deg, #bfdbfe 0%, #eff6ff 34%, #e0f2f1 100%);
+    radial-gradient(ellipse 90% 55% at 50% -5%, hsl(var(--primary) / 0.20), rgba(0, 0, 0, 0) 60%),
+    radial-gradient(rgba(255, 255, 255, 0.045) 2px, transparent 2.6px),
+    radial-gradient(hsl(var(--secondary) / 0.07) 2px, transparent 2.6px),
+    radial-gradient(ellipse 120% 90% at 50% 45%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.5) 100%),
+    linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--background)) 38%, hsl(var(--background)) 100%);
   background-size: auto, 26px 26px, 26px 26px, auto, auto;
   background-position: 0 0, 0 0, 13px 13px, 0 0, 0 0;
 }
@@ -250,21 +250,21 @@
    components set their own.) */
 button:not(:disabled) { transition: transform 0.07s ease, box-shadow 0.07s ease, filter 0.07s ease; }
 button:not(:disabled):active { transform: translateY(2px) scale(0.985); filter: brightness(0.97); }
-/* Framed modal shell, modelled on classic game settings panels: white
-   rim, coloured outline, deep hard shadow. */
+/* Framed modal shell in the new system: a dark glass panel with a light
+   hairline rim and a deep shadow, so dialogs sit in the same night world
+   as every screen. */
 .game-frame {
-  border: 4px solid #ffffff;
-  outline: 3px solid rgba(219, 39, 119, 0.35);
+  border: 3px solid hsl(0 0% 100% / 0.14);
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.9),
-    0 10px 0 rgba(0, 0, 0, 0.10),
-    0 34px 60px -18px rgba(60, 5, 35, 0.55);
+    inset 0 1px 0 hsl(0 0% 100% / 0.12),
+    0 10px 0 rgba(0, 0, 0, 0.25),
+    0 34px 60px -18px rgba(0, 0, 0, 0.8);
   border-radius: 1.75rem;
 }
 /* Trapezoid title tab that overlaps the frame's top edge. */
 .ribbon-title {
   clip-path: polygon(5% 0, 95% 0, 100% 100%, 0 100%);
-  background: linear-gradient(180deg, #f472b6, #db2777);
+  background: linear-gradient(180deg, hsl(var(--primary-light)), hsl(var(--primary)));
   color: #fff;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.22);
   filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.15));

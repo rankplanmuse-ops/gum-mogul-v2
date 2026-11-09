@@ -65,7 +65,7 @@ export const LightningWalletPanel = ({ gameState, onReceive, onZapPromo, onSellS
 
       <div className="p-5 space-y-5">
         {!terminal && (
-          <div className="rounded-2xl bg-amber-50 border-2 border-amber-200 p-4 text-sm font-semibold">
+          <div className="rounded-2xl bg-amber-400/10 border-2 border-amber-300/30 p-4 text-sm font-semibold">
             🔌 Your machines only take cards right now (2.9% fee on every sale). Buy the <strong>Lightning Terminal upgrade ($150)</strong> in the Empire section and 25% of customers start paying in sats: instant settlement, zero card fee.
           </div>
         )}
@@ -130,7 +130,7 @@ export const LightningWalletPanel = ({ gameState, onReceive, onZapPromo, onSellS
           </div>
         </div>
 
-        <div className="rounded-2xl bg-sky-50 border-2 border-sky-200 p-4">
+        <div className="rounded-2xl bg-sky-400/10 border-2 border-sky-300/30 p-4">
           <h3 className="font-black text-sky-900">🌍 Try real Lightning (optional, leaves the game)</h3>
           <p className="text-sm font-semibold text-sky-900/70 mt-1">
             WebLN in this browser: <strong>{webln ? "detected ⚡" : "not detected"}</strong>. Or zap the makers a few real sats at their Lightning Address:
@@ -141,7 +141,7 @@ export const LightningWalletPanel = ({ gameState, onReceive, onZapPromo, onSellS
           <p className="text-xs font-semibold text-sky-900/60 mt-1">Opens your own Lightning wallet. The game never holds real keys or real money.</p>
         </div>
 
-        <p className="text-xs font-bold text-amber-700 bg-amber-50 rounded-xl p-3">⚡ Lightning fact of the day: {fact}</p>
+        <p className="text-xs font-bold text-amber-300 bg-amber-400/10 rounded-xl p-3">⚡ Lightning fact of the day: {fact}</p>
       </div>
     </Card>
   );

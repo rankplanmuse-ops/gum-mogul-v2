@@ -24,9 +24,9 @@ export const FinancialDashboard = ({ gameState, dailyProfit, simple }: Props) =>
   const ladder = Array.from({ length: Math.min(claimed + 2, 8) }, (_, i) => milestoneAt(i));
   const stats = [
     { label: "Cash", value: formatCurrency(gameState.cash), icon: Wallet, cls: gameState.cash < 0 ? "text-loss" : "text-foreground", bg: "bg-[hsl(var(--primary)/0.12)]" },
-    { label: "Sats Wallet", value: formatSats(gameState.sats), icon: Zap, cls: "text-amber-500", bg: "bg-amber-100" },
-    { label: "Reputation", value: `${Math.round(gameState.reputation)} / 100`, icon: Heart, cls: "text-rose-500", bg: "bg-rose-100" },
-    { label: "Day", value: `${gameState.day}`, icon: CalendarDays, cls: "text-foreground", bg: "bg-sky-100" },
+    { label: "Sats Wallet", value: formatSats(gameState.sats), icon: Zap, cls: "text-amber-500", bg: "bg-amber-400/20" },
+    { label: "Reputation", value: `${Math.round(gameState.reputation)} / 100`, icon: Heart, cls: "text-rose-500", bg: "bg-rose-400/20" },
+    { label: "Day", value: `${gameState.day}`, icon: CalendarDays, cls: "text-foreground", bg: "bg-sky-400/20" },
   ];
   return (
     <div className="space-y-4">

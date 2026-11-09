@@ -18,7 +18,7 @@ export const BankPanel = ({ gameState, onTakeLoan, onRepay }: Props) => {
   const maxOwed = LOAN_LTV * assets;
   const ltvPct = maxOwed > 0 ? Math.min(100, (owed / maxOwed) * 100) : 0;
   return (
-    <Card className="bubbly-card p-5 bg-gradient-to-br from-sky-50 to-indigo-50">
+    <Card className="bubbly-card p-5 bg-gradient-to-br from-sky-400/15 to-indigo-400/10">
       <h3 className="font-black text-lg flex items-center gap-2">
         <Landmark className="h-5 w-5 text-indigo-600" /> Gum Bank
       </h3>
@@ -26,7 +26,7 @@ export const BankPanel = ({ gameState, onTakeLoan, onRepay }: Props) => {
         Borrow for machines, locations or stock. You can run several loans at once: the bank lends up to {Math.round(LOAN_LTV * 100)}% of your asset value across all of them (max {MAX_LOANS}). Everything you owe is skimmed from 10% of daily revenue, oldest loan first, and counts against your net worth.
       </p>
 
-      <div className="mt-3 bg-white/80 rounded-2xl border p-4">
+      <div className="mt-3 bg-white/10 rounded-2xl border border-white/10 p-4">
         <div className="flex justify-between flex-wrap gap-1 text-sm font-black">
           <span>💼 Assets {formatCurrency(assets)}</span>
           <span>🏦 Owed {formatCurrency(owed)} of {formatCurrency(maxOwed)} borrowing room</span>
@@ -35,7 +35,7 @@ export const BankPanel = ({ gameState, onTakeLoan, onRepay }: Props) => {
         {loans.length === 0 && <p className="text-xs font-bold text-muted-foreground mt-2">No loans running. Your full borrowing room is available.</p>}
         <div className="space-y-2 mt-2">
           {loans.map((loan) => (
-            <div key={loan.id} className="bg-sky-50 rounded-2xl border border-sky-100 p-3">
+            <div key={loan.id} className="bg-sky-400/10 rounded-2xl border border-sky-300/25 p-3">
               <p className="font-black text-sm">{loan.emoji} {loan.name} (day {loan.dayTaken}): you owe {formatCurrency(loan.owed)}</p>
               <div className="flex gap-2 mt-2">
                 <Button onClick={() => onRepay(50, loan.id)} disabled={gameState.cash <= 0} variant="secondary" className="flex-1 rounded-full font-black min-h-9">
@@ -54,7 +54,7 @@ export const BankPanel = ({ gameState, onTakeLoan, onRepay }: Props) => {
         {LOAN_TIERS.map((tier) => {
           const blocker = loanBlocker(gameState, tier);
           return (
-            <div key={tier.id} className="bg-white/80 rounded-2xl border p-3 flex items-center gap-3">
+            <div key={tier.id} className="bg-white/10 rounded-2xl border border-white/10 p-3 flex items-center gap-3">
               <div className="text-3xl">{tier.emoji}</div>
               <div className="min-w-0 flex-1">
                 <p className="font-black text-sm">{tier.name}: {formatCurrency(tier.amount)}</p>

@@ -23,16 +23,17 @@ import { Play, FastForward, RotateCcw, HelpCircle, X, Volume2, VolumeX, Store, M
 import { chiptune, MUSIC_PREF_KEY } from "@/lib/music";
 import { sfxCoin, sfxError, sfxFanfare, setSfxEnabled, SFX_PREF_KEY } from "@/lib/sfx";
 import { toast } from "sonner";
-import crateStage1 from "@/assets/crate-stage-1.jpg";
-import crateStage2 from "@/assets/crate-stage-2.jpg";
-import crateStage3 from "@/assets/crate-stage-3.jpg";
-import crateStage4 from "@/assets/vending-machine-remake.jpg";
+import crateStage1 from "@/assets/gm1-stage-1.jpg";
+import crateStage2 from "@/assets/gm1-stage-2.jpg";
+import crateStage3 from "@/assets/gm1-stage-3.jpg";
+import crateStage4 from "@/assets/gm1-stage-4.jpg";
+import gm1Intro from "@/assets/gm1-intro.mp4";
 
 const CRATE_STEPS = [
-  { img: crateStage1, title: "A crate just landed at the Corner Shop.", btn: "Open the crate" },
-  { img: crateStage2, title: "Something red is hiding under a cover.", btn: "Pull the cover off" },
-  { img: crateStage3, title: "Panels everywhere. Worth it.", btn: "Clear the wreckage" },
-  { img: crateStage4, title: "Your first machine. Old school, and all yours.", btn: "Start selling" },
+  { img: crateStage1, title: "A bigger crate just landed at the Corner Shop.", btn: "Open the crate" },
+  { img: crateStage2, title: "The lid is off. Something red is rising out of the packing.", btn: "Keep unpacking" },
+  { img: crateStage3, title: "Panels down. There she is.", btn: "Clear the wreckage" },
+  { img: crateStage4, title: "Your first machine. GM-1, First Edition, and all yours.", btn: "Start selling" },
 ];
 const CRATE_STEP_NAMES = ["Sealed", "Open", "Uncovered", "Ready"];
 const THEME_KEY = "gum-mogul-theme";
@@ -100,6 +101,9 @@ const Index = () => {
   // new player (crate still sealed) starts on the Machines screen.
   const [activeTab, setActiveTab] = useState(() => (gameState.firstMachineUnpacked ? "map" : "play"));
   const [selectedLocId, setSelectedLocId] = useState("corner");
+  // The no-text intro plays once for a new player, above the crate; it
+  // collapses away when it ends or is skipped, and can be replayed.
+  const [showIntro, setShowIntro] = useState(true);
   // Two unified color modes: Pink (default) and Blue (serious). One switch
   // re-skins every token-driven surface; the choice persists per player.
   const [theme, setTheme] = useState<"pink" | "blue">(() => {
@@ -228,7 +232,7 @@ const Index = () => {
           Finance, settings. The diorama is a full game menu with its own
           buttons, so the global header hides there. */}
       {activeTab !== "map" && activeTab !== "location" && (
-      <div className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-black/10">
+      <div className="sticky top-0 z-40 bg-slate-950/70 backdrop-blur-xl border-b border-white/10">
         <div className="container mx-auto max-w-7xl px-4 py-2 flex items-center gap-2">
           <span className="font-black text-sm whitespace-nowrap">📅 Day {gameState.day}</span>
           <button onClick={() => goToSection("finance")} className="flex-1 flex items-center justify-center gap-3 rounded-full bg-slate-900 text-white font-black text-sm py-1.5 px-3 active:scale-[0.98] transition-transform" aria-label="Open Finance: wallet and bank">
@@ -236,7 +240,7 @@ const Index = () => {
             <span className="text-amber-300">⚡ {gameState.sats.toLocaleString()} sats</span>
             <span className="text-[11px] uppercase tracking-wide bg-white/20 rounded-full px-2 py-0.5">Finance</span>
           </button>
-          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full bg-white border-2 border-primary/30 text-primary">
+          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full bg-white/10 border-2 border-white/20 text-primary">
             <Cog className="h-4 w-4" />
           </button>
         </div>
@@ -256,7 +260,7 @@ const Index = () => {
           refill shortcut and auto play, floating above the dock. Hidden on
           the Map, whose diorama menu carries its own Next Day button. */}
       {activeTab !== "map" && activeTab !== "location" && (
-      <div className="fixed bottom-[calc(3.4rem+env(safe-area-inset-bottom))] lg:bottom-[5.75rem] inset-x-0 z-40 bg-white/92 backdrop-blur border-t-2 px-3 pt-2 pb-2 flex gap-2 lg:max-w-2xl lg:mx-auto lg:rounded-t-3xl">
+      <div className="fixed bottom-[calc(3.4rem+env(safe-area-inset-bottom))] lg:bottom-[5.75rem] inset-x-0 z-40 bg-slate-950/75 backdrop-blur border-t border-white/10 px-3 pt-2 pb-2 flex gap-2 lg:max-w-2xl lg:mx-auto lg:rounded-t-3xl">
         <Button onClick={handleNextDay} disabled={isAutoPlaying || gameState.gameOver} className="flex-[1.4] h-12 rounded-full font-black gap-1.5">
           <Play className="h-5 w-5" /> Next Day <span className="text-[11px] font-bold opacity-85">est {costs.netProfit >= 0 ? "+" : "-"}${Math.abs(costs.netProfit).toFixed(0)}</span>
         </Button>
@@ -273,7 +277,7 @@ const Index = () => {
           together on the Finance screen, opened from the top bar. Hidden on
           the Map, whose diorama menu carries its own dock. */}
       {activeTab !== "map" && activeTab !== "location" && (
-      <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/80 backdrop-blur-xl border-t border-black/10 pt-1 pb-[max(0.3rem,env(safe-area-inset-bottom))] lg:left-1/2 lg:right-auto lg:-translate-x-1/2 lg:w-[600px] lg:bottom-3 lg:rounded-full lg:border-2 lg:border-black/10 lg:shadow-2xl lg:px-3" aria-label="Game screens">
+      <nav className="fixed bottom-0 inset-x-0 z-40 bg-slate-950/75 backdrop-blur-xl border-t border-white/10 pt-1 pb-[max(0.3rem,env(safe-area-inset-bottom))] lg:left-1/2 lg:right-auto lg:-translate-x-1/2 lg:w-[600px] lg:bottom-3 lg:rounded-full lg:border lg:border-white/10 lg:shadow-2xl lg:px-3" aria-label="Game screens">
         <div className="grid grid-cols-5">
           {[
             { id: "map", label: "Map", icon: Map },
@@ -286,7 +290,7 @@ const Index = () => {
               key={tab.id}
               onClick={() => goToSection(tab.id)}
               aria-current={activeTab === tab.id ? "page" : undefined}
-              className={`flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-colors ${activeTab === tab.id ? "text-primary" : "text-slate-500"}`}
+              className={`flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-colors ${activeTab === tab.id ? "text-primary" : "text-white/55"}`}
             >
               <tab.icon className="h-5 w-5" strokeWidth={activeTab === tab.id ? 2.6 : 2} />
               <span className={`text-[11px] leading-none ${activeTab === tab.id ? "font-black" : "font-semibold"}`}>{tab.label}</span>
@@ -300,18 +304,18 @@ const Index = () => {
         <div className={activeTab === "play" ? "space-y-7 sm:space-y-10" : "hidden"}>
         <header id="play" className="text-center space-y-2">
           <div className="text-5xl sm:text-6xl animate-floaty inline-block">🍬</div>
-          <h1 className={`text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r ${theme === "blue" ? "from-blue-700 via-sky-500 to-teal-400" : "from-pink-600 via-fuchsia-500 to-amber-500"} bg-clip-text text-transparent drop-shadow-sm`}>
+          <h1 className={`text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r ${theme === "blue" ? "from-blue-400 via-sky-400 to-teal-300" : "from-pink-400 via-fuchsia-400 to-amber-300"} bg-clip-text text-transparent drop-shadow-sm`}>
             Gum Mogul
           </h1>
           <p className="text-base sm:text-lg font-bold text-muted-foreground">Build a bubblegum empire, one machine at a time.</p>
           <button onClick={() => setShowHelp(!showHelp)} className="inline-flex items-center gap-1 font-black text-primary underline underline-offset-4">
             {showHelp ? <X className="h-4 w-4" /> : <HelpCircle className="h-4 w-4" />} How to play
           </button>
-          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="ml-3 inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-white border-[3px] border-primary/30 shadow-[0_4px_0_rgba(0,0,0,0.12)] text-primary align-middle">
+          <button onClick={() => setShowSettings(true)} aria-label="Open settings" className="ml-3 inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-white/10 border-[3px] border-white/20 shadow-[0_4px_0_rgba(0,0,0,0.25)] text-primary align-middle">
             <Cog className="h-5 w-5" />
           </button>
           {showHelp && (
-            <div className="max-w-2xl mx-auto text-left bg-white/85 backdrop-blur rounded-3xl border-[3px] p-5 text-sm font-semibold space-y-2 animate-pop">
+            <div className="max-w-2xl mx-auto text-left bg-slate-950/70 backdrop-blur rounded-3xl border border-white/10 p-5 text-sm font-semibold space-y-2 animate-pop">
               <p>1. <strong>Stock up.</strong> Buy gum on the Gums tab so the machine is never empty.</p>
               <p>2. <strong>Set your price.</strong> Cheaper sells more. Pricier earns more per gum, until people walk away.</p>
               <p>3. <strong>Hit Next Day.</strong> That is the whole loop. Everything else unlocks as you grow.</p>
@@ -326,14 +330,22 @@ const Index = () => {
         )}
 
         {crated ? (
-        <div className="max-w-2xl mx-auto w-full">
-          <div className="bubbly-card overflow-hidden bg-white">
+        <div className="max-w-3xl mx-auto w-full">
+          {showIntro ? (
+            <div className="relative rounded-[1.75rem] overflow-hidden border border-white/10 shadow-2xl mb-4">
+              <video src={gm1Intro} poster={crateStage4} autoPlay muted playsInline onEnded={() => setShowIntro(false)} className="w-full h-[58dvh] object-cover" aria-label="Gum Mogul intro: the first machine being unpacked" />
+              <button onClick={() => setShowIntro(false)} className="absolute top-3 right-3 rounded-full bg-slate-950/70 backdrop-blur-md px-4 py-2 text-white font-black text-[13px] active:scale-[0.97] transition-transform">Skip intro</button>
+            </div>
+          ) : (
+            <button onClick={() => setShowIntro(true)} className="mb-3 text-[13px] font-black text-primary underline underline-offset-4">Replay the intro</button>
+          )}
+          <div className="bubbly-card overflow-hidden">
             <div className="flex gap-1.5 p-3 pb-0">
               {CRATE_STEP_NAMES.map((name, i) => (
-                <span key={name} className={`flex-1 text-center text-[11px] font-black rounded-full py-1.5 ${i < crateStep ? "bg-emerald-500 text-white" : i === crateStep ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400"}`}>{i + 1}. {name}</span>
+                <span key={name} className={`flex-1 text-center text-[11px] font-black rounded-full py-1.5 ${i < crateStep ? "bg-emerald-500 text-white" : i === crateStep ? "bg-primary text-white" : "bg-white/10 text-white/45"}`}>{i + 1}. {name}</span>
               ))}
             </div>
-            <img key={crateStep} src={CRATE_STEPS[crateStep].img} alt="Your first gum machine, being unpacked from its wooden crate" className="w-full h-[380px] sm:h-[440px] object-cover mt-3 animate-pop" draggable={false} />
+            <img key={crateStep} src={CRATE_STEPS[crateStep].img} alt="Your first gum machine, being unpacked from its wooden crate" className="w-full h-[56dvh] sm:h-[600px] object-cover mt-3 animate-pop" draggable={false} />
             <div className="p-5 space-y-3 text-center">
               <p className="text-xl font-black">{CRATE_STEPS[crateStep].title}</p>
               <Button onClick={() => { const res = advanceCrate(gameState); apply(res); if (res.state.firstMachineUnpacked) goToSection("map"); }} className="w-full h-14 text-lg rounded-full font-black">
@@ -348,7 +360,7 @@ const Index = () => {
         {/* News bar: HARD fixed height at every breakpoint, content is
             line-clamped inside it. The bar can never grow or shrink, so
             the page below never shifts when the headline changes. */}
-        <div className="bg-white/85 backdrop-blur rounded-3xl sm:rounded-full px-6 font-bold text-center shadow h-[4.75rem] sm:h-[3.25rem] flex items-center justify-center overflow-hidden">
+        <div className="bg-slate-950/60 backdrop-blur rounded-3xl sm:rounded-full border border-white/10 px-6 font-bold text-center shadow h-[4.75rem] sm:h-[3.25rem] flex items-center justify-center overflow-hidden">
           {gameState.pendingEvent ? (
             <p className="line-clamp-3 sm:line-clamp-1">🔮 Tomorrow: {gameState.pendingEvent.icon} <strong>{gameState.pendingEvent.title}</strong> · demand x{gameState.pendingEvent.demandFactor}. {gameState.pendingEvent.text}</p>
           ) : (
@@ -366,7 +378,7 @@ const Index = () => {
                 <Button onClick={handleNextDay} disabled={isAutoPlaying || gameState.gameOver} className="flex-[1.7] h-14 text-lg rounded-full font-black gap-2 ring-4 ring-primary/30">
                   <Play className="h-5 w-5" /> Next Day
                 </Button>
-                <Button onClick={() => setIsAutoPlaying(!isAutoPlaying)} variant={isAutoPlaying ? "destructive" : "outline"} className="flex-1 h-14 text-base rounded-full font-black gap-2 bg-white/60 text-slate-600">
+                <Button onClick={() => setIsAutoPlaying(!isAutoPlaying)} variant={isAutoPlaying ? "destructive" : "outline"} className="flex-1 h-14 text-base rounded-full font-black gap-2">
                   <FastForward className="h-5 w-5" /> {isAutoPlaying ? "Stop Auto" : "Auto Play"}
                 </Button>
               </div>
@@ -472,27 +484,27 @@ const Index = () => {
 
       {showSettings && (
         <div className="fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-[2px] flex items-center justify-center p-4" onClick={() => setShowSettings(false)}>
-          <div className={`game-frame relative bg-gradient-to-b from-sky-100 via-white ${theme === "blue" ? "to-blue-50" : "to-pink-50"} max-w-sm w-full px-6 pb-6 pt-10 animate-pop`} onClick={(e) => e.stopPropagation()}>
+          <div className="game-frame relative bg-[hsl(var(--card))] max-w-sm w-full px-6 pb-6 pt-10 animate-pop" onClick={(e) => e.stopPropagation()}>
             <div className="ribbon-title absolute -top-5 left-1/2 -translate-x-1/2 px-10 py-2 text-2xl font-black font-display whitespace-nowrap">Settings</div>
-            <button onClick={() => setShowSettings(false)} aria-label="Close settings" className="absolute -top-3 right-3 h-10 w-10 rounded-xl bg-white border-[3px] border-rose-300 shadow-[0_4px_0_rgba(190,24,93,0.2)] text-rose-500 font-black text-lg leading-none">✕</button>
+            <button onClick={() => setShowSettings(false)} aria-label="Close settings" className="absolute -top-3 right-3 h-10 w-10 rounded-xl bg-white/10 border-[3px] border-rose-300/50 shadow-[0_4px_0_rgba(0,0,0,0.3)] text-rose-400 font-black text-lg leading-none">✕</button>
             <div className="space-y-2.5 mt-1">
-              <div className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 px-4 py-3 font-black">
+              <div className="w-full flex items-center justify-between bg-white/10 rounded-2xl border-2 border-white/10 px-4 py-3 font-black">
                 <span>🎨 Color mode</span>
                 <span className="flex gap-1.5">
                   <button onClick={() => setTheme("pink")} aria-pressed={theme === "pink"} className={`rounded-full px-3 py-1 text-sm ${theme === "pink" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>Pink</button>
                   <button onClick={() => setTheme("blue")} aria-pressed={theme === "blue"} className={`rounded-full px-3 py-1 text-sm ${theme === "blue" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>Blue</button>
                 </span>
               </div>
-              <button onClick={toggleMusic} className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 px-4 py-3 font-black">
+              <button onClick={toggleMusic} className="w-full flex items-center justify-between bg-white/10 rounded-2xl border-2 border-white/10 px-4 py-3 font-black">
                 <span>🎵 Music: Gum Mogul Overture</span><span className={musicOn ? "text-accent" : "text-muted-foreground"}>{musicOn ? "ON" : "OFF"}</span>
               </button>
-              <button onClick={toggleSfx} className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 px-4 py-3 font-black">
+              <button onClick={toggleSfx} className="w-full flex items-center justify-between bg-white/10 rounded-2xl border-2 border-white/10 px-4 py-3 font-black">
                 <span>🔊 Sound effects</span><span className={sfxOn ? "text-accent" : "text-muted-foreground"}>{sfxOn ? "ON" : "OFF"}</span>
               </button>
-              <button onClick={() => { setShowSettings(false); setShowHelp(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 px-4 py-3 font-black">
+              <button onClick={() => { setShowSettings(false); setShowHelp(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="w-full flex items-center justify-between bg-white/10 rounded-2xl border-2 border-white/10 px-4 py-3 font-black">
                 <span>❓ How to play</span><span className="text-primary">Open</span>
               </button>
-              <button onClick={() => { setShowSettings(false); handleReset(); }} className="w-full flex items-center justify-between bg-white/85 rounded-2xl border-2 border-rose-200 px-4 py-3 font-black text-rose-600">
+              <button onClick={() => { setShowSettings(false); handleReset(); }} className="w-full flex items-center justify-between bg-white/10 rounded-2xl border-2 border-rose-300/40 px-4 py-3 font-black text-rose-400">
                 <span>🗑️ Reset game</span><span>Wipe save</span>
               </button>
             </div>
@@ -503,7 +515,7 @@ const Index = () => {
 
       {gameState.gameOver && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-[2rem] border-[4px] border-rose-300 max-w-md w-full p-8 text-center shadow-2xl animate-pop">
+          <div className="bg-[hsl(var(--card))] rounded-[2rem] border-[4px] border-rose-300/50 max-w-md w-full p-8 text-center shadow-2xl animate-pop">
             <div className="text-6xl mb-3">💥</div>
             <h2 className="text-3xl font-black">The bubble popped</h2>
             <p className="font-semibold text-muted-foreground mt-2">Three days in the red. You reached day {gameState.day} with {`$${gameState.totalRevenue.toFixed(0)}`} lifetime revenue and {gameState.achievements.length} achievements.</p>

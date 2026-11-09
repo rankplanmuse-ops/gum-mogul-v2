@@ -1,4 +1,4 @@
-import vendingMachineImg from "@/assets/vending-machine-remake.jpg";
+import vendingMachineImg from "@/assets/gm1-first-edition.jpg";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
